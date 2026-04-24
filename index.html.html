@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>CompBen Connect</title>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#F4FAF2;--surface:#fff;--border:#D6F0CC;--border-light:#EEF8EC;
+  --text:#1a1a1a;--text-muted:#6B6B67;--text-label:#3D3D3A;--text-head:#033222;
+  --inp-bg:#fff;--inp-border:#C9F3BE;--tbl-head-bg:#E8F6E0;--tbl-month-bg:#EBF8E5;
+  --card-shadow:0 4px 6px -1px rgba(3,50,34,0.07),0 2px 4px -1px rgba(3,50,34,0.04);
+  --stat-bg:linear-gradient(135deg,#033222 0%,#0a5e1a 55%,#1a8a0a 100%);
+  --modal-overlay:rgba(0,0,0,0.5);--drawer-overlay:rgba(0,0,0,0.25);
+  --badge-green-bg:#E9FAE5;--badge-green-c:#239A0D;
+  --badge-amber-bg:#FFF4D3;--badge-amber-c:#A1470B;
+  --badge-grey-bg:#F3F3F3;--badge-grey-c:#6B6B67;
+  --badge-blue-bg:#D8EBFF;--badge-blue-c:#1356BA;
+  --badge-purple-bg:#EEE9FE;--badge-purple-c:#5F21B6;
+  --badge-teal-bg:#E6F4EA;--badge-teal-c:#1E7B34;
+  --badge-red-bg:#FEF2F2;--badge-red-c:#B91C1C;
+  --pill-bg:#E9FAE5;--pill-c:#239A0D;--pill-border:#C9F3BE;
+  --pen-bg:#F4FAF2;--pen-border:#C9F3BE;
+  --coming-soon-c:#6B6B67;--topbar-bg:#fff;--topbar-border:#D6F0CC;
+  --filter-tag-bg:#E9FAE5;--filter-tag-c:#239A0D;--filter-tag-border:#C9F3BE;
+  --apikey-banner:#FFF4D3;--apikey-banner-border:#F59E0B;
+  --pg-bg:#fff;--pg-active-bg:#E9FAE5;
+  --export-preview:#F4FAF2;
+  --sg-card-hdr:#F7FEF5;
+}
+body.dark{
+  --bg:#0f1a0f;--surface:#1a2b1a;--border:#2a4a2a;--border-light:#213821;
+  --text:#e8f5e8;--text-muted:#8aab8a;--text-label:#aaccaa;--text-head:#b2f0b2;
+  --inp-bg:#162216;--inp-border:#2e5c2e;--tbl-head-bg:#1e3520;--tbl-month-bg:#1b3020;
+  --card-shadow:0 4px 6px -1px rgba(0,0,0,0.4),0 2px 4px -1px rgba(0,0,0,0.3);
+  --stat-bg:linear-gradient(135deg,#021a0e 0%,#053012 55%,#0a4a06 100%);
+  --modal-overlay:rgba(0,0,0,0.75);--drawer-overlay:rgba(0,0,0,0.5);
+  --badge-green-bg:#0d2e0d;--badge-green-c:#4ade80;
+  --badge-amber-bg:#2e1e06;--badge-amber-c:#fbbf24;
+  --badge-grey-bg:#1e1e1e;--badge-grey-c:#9ca3af;
+  --badge-blue-bg:#0d1f3a;--badge-blue-c:#60a5fa;
+  --badge-purple-bg:#1e103a;--badge-purple-c:#c084fc;
+  --badge-teal-bg:#0a2218;--badge-teal-c:#34d399;
+  --badge-red-bg:#2e0d0d;--badge-red-c:#f87171;
+  --pill-bg:#0d2e0d;--pill-c:#4ade80;--pill-border:#2e5c2e;
+  --pen-bg:#162216;--pen-border:#2e5c2e;
+  --coming-soon-c:#8aab8a;--topbar-bg:#1a2b1a;--topbar-border:#2a4a2a;
+  --filter-tag-bg:#0d2e0d;--filter-tag-c:#4ade80;--filter-tag-border:#2e5c2e;
+  --apikey-banner:#2e1e06;--apikey-banner-border:#92400e;
+  --pg-bg:#162216;--pg-active-bg:#0d2e0d;
+  --export-preview:#162216;
+  --sg-card-hdr:#162216;
+}
+body{font-family:'Rubik',sans-serif;background:var(--bg);min-height:100vh;color:var(--text);transition:background .2s,color .2s}
+select,input,button,label{font-family:'Rubik',sans-serif}
+.app{display:flex;min-height:100vh}
+.sidebar{width:220px;min-height:100vh;background:#033222;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow:hidden;transition:width .2s}
+.sidebar.collapsed{width:56px}
+.sidebar-logo{padding:14px 16px;display:flex;align-items:center;gap:10px;border-bottom:1px solid rgba(255,255,255,0.08)}
+.sidebar-logo-title{font-size:13px;font-weight:700;color:#fff;white-space:nowrap}
+.sidebar-logo-sub{font-size:9px;color:#32CE13;font-weight:500;margin-top:1px}
+.sidebar.collapsed .sidebar-logo-title,.sidebar.collapsed .sidebar-logo-sub,.sidebar.collapsed .nav-label{display:none}
+.nav{flex:1;overflow-y:auto;padding:8px 0}
+.nav-item{display:flex;align-items:center;gap:9px;width:100%;padding:9px 16px;background:none;border:none;border-left:3px solid transparent;cursor:pointer;color:rgba(255,255,255,0.65);font-size:12px;font-family:'Rubik',sans-serif;text-align:left;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.nav-item:hover{background:rgba(255,255,255,0.06);color:rgba(255,255,255,0.9)}
+.nav-item.active{color:#32CE13;border-left-color:#32CE13;background:rgba(50,206,19,0.12);font-weight:500}
+.sidebar.collapsed .nav-item{justify-content:center;padding:9px 0}
+.nav-icon{font-size:15px;flex-shrink:0}
+.nav-group-btn{display:flex;align-items:center;gap:9px;width:100%;padding:9px 16px;background:none;border:none;border-left:3px solid transparent;cursor:pointer;color:rgba(255,255,255,0.65);font-size:12px;font-family:'Rubik',sans-serif;text-align:left;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.nav-group-btn:hover{background:rgba(255,255,255,0.06)}
+.nav-group-btn.active{color:#32CE13;border-left-color:#32CE13;background:rgba(50,206,19,0.12);font-weight:500}
+.nav-group-arrow{margin-left:auto;font-size:10px;opacity:.5;transition:transform .2s ease;display:inline-block}
+.nav-group-arrow.open{transform:rotate(180deg)}
+.nav-group-children{max-height:0;overflow:hidden;transition:max-height .25s cubic-bezier(.4,0,.2,1)}
+.nav-group-children.open{max-height:200px}
+.nav-child{padding-left:38px!important}
+.sidebar-footer{padding:10px 14px;border-top:1px solid rgba(255,255,255,0.08);display:flex;justify-content:flex-end}
+.collapse-btn{background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.35);font-size:15px;line-height:1;padding:4px}
+.main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:100vh;margin-left:220px;transition:margin-left .2s}
+.main.collapsed{margin-left:56px}
+.topbar{height:52px;background:var(--topbar-bg);border-bottom:1px solid var(--topbar-border);display:flex;align-items:center;justify-content:space-between;padding:0 1.25rem;flex-shrink:0;position:sticky;top:0;z-index:50}
+.topbar-title{font-size:14px;font-weight:600;color:var(--text-head)}
+.topbar-actions{display:flex;align-items:center;gap:7px}
+.content{padding:1.25rem;flex:1}
+.card-body{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;padding:13px 15px;margin-bottom:1.1rem;box-shadow:var(--card-shadow)}
+.inp{height:36px;padding:0 14px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--inp-bg);color:var(--text);font-size:12px;outline:none;transition:border-color .2s}
+.inp:hover{border-color:#32CE13}
+.inp:focus{border-color:#32CE13}
+.btn-green{height:34px;padding:0 18px;border:none;border-radius:999px;background:#32CE13;color:#fff;font-size:12px;cursor:pointer;font-weight:500;transition:all .2s cubic-bezier(.4,0,.2,1)}
+.btn-green:hover{background:#28b510}
+.btn-green:active{transform:scale(.96)}
+.btn-ubas{height:34px;padding:0 15px;border:none;border-radius:999px;background:#8435EB;color:#fff;font-size:11px;cursor:pointer;font-weight:500;transition:all .2s}
+.btn-ubas:active{transform:scale(.96)}
+.btn-red{padding:0 12px;height:30px;border:1.5px solid #FCA5A5;border-radius:999px;background:var(--badge-red-bg);color:#B91C1C;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-outline{height:32px;padding:0 12px;border:1.5px solid #C9F3BE;border-radius:999px;background:transparent;color:#239A0D;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-outline:hover{background:var(--badge-green-bg)}
+.btn-blue{height:32px;padding:0 12px;border:1.5px solid #7392E3;border-radius:999px;background:transparent;color:#7392E3;font-size:11px;cursor:pointer;transition:all .2s}
+.btn-tab{height:30px;padding:0 12px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--surface);color:var(--text);font-size:11px;cursor:pointer;transition:all .2s}
+.btn-tab.active{border-color:#32CE13;background:var(--badge-green-bg);color:#32CE13;font-weight:500}
+.btn-tab.active-red{border-color:#B91C1C;background:var(--badge-red-bg);color:#B91C1C}
+.tbl{width:100%;border-collapse:collapse;font-size:11px}
+.tbl th{text-align:left;padding:7px 9px;border-bottom:0.5px solid var(--border);font-weight:500;font-size:10px;color:var(--text-head);white-space:nowrap;background:var(--tbl-head-bg);position:relative}
+.tbl td{padding:7px 9px;border-bottom:0.5px solid var(--border-light);color:var(--text);font-size:11px;vertical-align:middle}
+.tbl tr.row-sep td{border-top:2px solid var(--border)}
+.tbl tr.zebra-even td{background:var(--bg)}
+.tbl tr.month-sep td{background:var(--tbl-month-bg);border-top:2px solid var(--border);border-bottom:1px solid var(--border);font-size:10px;font-weight:600;color:#239A0D;padding:5px 9px;cursor:pointer;user-select:none;}
+.tbl tr.month-sep td:hover{background:var(--badge-green-bg);}
+.month-arrow{display:inline-block;margin-right:6px;font-style:normal;transition:transform .15s;font-size:11px;}
+.month-arrow.collapsed{transform:rotate(-90deg);}
+.badge{display:inline-block;padding:2px 9px;border-radius:999px;font-size:10px;font-weight:500}
+.badge-green{background:var(--badge-green-bg);color:var(--badge-green-c)}
+.badge-amber{background:var(--badge-amber-bg);color:var(--badge-amber-c)}
+.badge-grey{background:var(--badge-grey-bg);color:var(--badge-grey-c)}
+.badge-blue{background:var(--badge-blue-bg);color:var(--badge-blue-c)}
+.badge-purple{background:var(--badge-purple-bg);color:var(--badge-purple-c)}
+.badge-teal{background:var(--badge-teal-bg);color:var(--badge-teal-c)}
+.badge-red-soft{background:var(--badge-red-bg);color:var(--badge-red-c)}
+.badge-member{background:var(--badge-green-bg);color:var(--badge-green-c)}
+.badge-scheduler{background:var(--badge-blue-bg);color:var(--badge-blue-c)}
+.badge-approver{background:var(--badge-purple-bg);color:var(--badge-purple-c)}
+.progress-wrap{height:5px;border-radius:3px;background:var(--border);overflow:hidden;margin:5px 0}
+.progress-bar{height:100%;border-radius:3px}
+.modal-overlay{position:fixed;inset:0;background:var(--modal-overlay);z-index:1000;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-box{background:var(--surface);border-radius:12px;width:100%;max-width:580px;max-height:85vh;overflow-y:auto;padding:1.4rem;position:relative}
+.modal-file{background:var(--surface);border-radius:12px;width:100%;max-width:820px;height:88vh;display:flex;flex-direction:column;overflow:hidden}
+.confirm-modal-box{background:var(--surface);border-radius:12px;width:100%;max-width:290px;padding:16px 18px}
+.confirm-modal-icon{width:36px;height:36px;border-radius:50%;background:var(--badge-red-bg);display:flex;align-items:center;justify-content:center;margin-bottom:9px}
+.confirm-modal-warning{background:var(--badge-amber-bg);border-radius:8px;padding:6px 9px;font-size:11px;color:var(--badge-amber-c);margin-bottom:12px}
+.toast{position:fixed;bottom:18px;right:18px;background:#32CE13;color:#fff;padding:7px 14px;border-radius:999px;font-size:11px;font-weight:500;z-index:9999;box-shadow:0 2px 8px rgba(0,0,0,0.15)}
+.coming-soon{text-align:center;padding:4rem 2rem;color:var(--coming-soon-c)}
+.section-banner{border-radius:12px;padding:11px 14px;margin-bottom:1.1rem;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;box-shadow:0 2px 4px -1px rgba(3,50,34,0.06)}
+.stat-gradient-wrap{background:var(--stat-bg);border-radius:12px;padding:11px;margin-bottom:1.1rem}
+.stat-glass-card{background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.22);border-radius:9px;padding:11px 13px}
+.stat-glass-label{font-size:9px;font-weight:600;color:rgba(255,255,255,0.6);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px}
+.stat-glass-value{font-size:22px;font-weight:700;color:#fff}
+.stat-glass-value.sm{font-size:14px;margin-top:3px}
+.stat-glass-value.accent{color:#DFF566}
+.overflow-x{overflow-x:auto}
+.row{display:flex;gap:9px;flex-wrap:wrap;align-items:flex-end}
+.field{display:flex;flex-direction:column;gap:4px}
+.field label{font-size:11px;color:#3D3D3A}
+.pill-ro{height:34px;padding:0 14px;display:flex;align-items:center;border-radius:999px;font-size:12px;font-weight:500;white-space:nowrap;background:var(--pill-bg);color:var(--pill-c);border:1px solid var(--pill-border)}
+.extract-hint{font-size:10px;color:#239A0D;font-weight:500;margin-top:2px}
+.extracting-hint{font-size:11px;color:#8435EB;font-style:italic}
+.pen-display{height:34px;padding:0 12px;display:flex;align-items:center;border-radius:999px;background:var(--pen-bg);border:0.5px solid var(--pen-border);font-size:11px;font-family:monospace;color:var(--text-muted)}
+.pen-last{background:var(--badge-green-bg);color:var(--badge-green-c);border-radius:3px;padding:1px 4px;font-weight:600}
+.pagination{display:flex;align-items:center;gap:4px;justify-content:flex-end;margin-top:9px;flex-wrap:wrap}
+.pg-btn{height:26px;padding:0 9px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--pg-bg);color:var(--text);font-size:10px;cursor:pointer;transition:all .2s}
+.pg-btn.active{border-color:#32CE13;background:var(--pg-active-bg);color:#32CE13;font-weight:500}
+.pg-btn:disabled{opacity:.35;cursor:not-allowed}
+.pg-info{font-size:10px;color:var(--text-muted);margin-left:4px}
+.apikey-banner{background:var(--apikey-banner);border:0.5px solid var(--apikey-banner-border);border-radius:10px;padding:9px 13px;font-size:11px;color:var(--badge-amber-c);margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.fi-icon-btn{background:none;border:none;cursor:pointer;padding:0 0 0 3px;color:var(--text-muted);font-size:10px;vertical-align:middle;line-height:1;opacity:.5}
+.fi-icon-btn.fi-active{opacity:1;color:#32CE13}
+.fi-dropdown{display:none;position:absolute;top:100%;left:0;z-index:200;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:5px;min-width:140px;margin-top:2px;box-shadow:0 4px 12px rgba(3,50,34,0.1)}
+.fi-dropdown.fi-open{display:block}
+.fi-dropdown select{width:100%;height:26px;padding:0 7px;border:1.5px solid var(--inp-border);border-radius:999px;font-size:10px;outline:none;background:var(--inp-bg);color:var(--text)}
+.filter-tag{display:inline-flex;align-items:center;gap:4px;height:22px;padding:0 9px;border-radius:999px;background:var(--filter-tag-bg);color:var(--filter-tag-c);font-size:10px;font-weight:500;border:1px solid var(--filter-tag-border)}
+.filter-tag-x{cursor:pointer;color:var(--badge-red-c);font-size:12px;line-height:1;margin-left:1px}
+.drawer-overlay{position:fixed;inset:0;background:var(--drawer-overlay);z-index:400;opacity:0;transition:opacity .2s ease;pointer-events:none}
+.drawer-overlay.open{opacity:1;pointer-events:all}
+.drawer-panel{position:fixed;top:0;right:0;height:100vh;width:300px;background:var(--surface);border-left:1px solid var(--border);z-index:500;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .25s cubic-bezier(.4,0,.2,1);box-shadow:-4px 0 16px rgba(3,50,34,0.1)}
+.drawer-panel.open{transform:translateX(0)}
+.drawer-header{padding:13px 15px;border-bottom:0.5px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;flex-shrink:0}
+.drawer-body{padding:13px 15px;flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:9px}
+.drawer-footer{padding:11px 15px;border-top:0.5px solid var(--border-light)}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.shimmer-field{border-color:#8435EB!important;position:relative;overflow:hidden}
+.shimmer-field::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,transparent 0%,rgba(132,53,235,0.12) 50%,transparent 100%);background-size:200% 100%;animation:shimmer 1.4s infinite;border-radius:inherit;pointer-events:none}
+/* ── Sprout Gov Tracker ── */
+.sg-card{background:var(--surface);border:0.5px solid var(--border);border-radius:12px;overflow:hidden;box-shadow:var(--card-shadow);margin-bottom:1rem}
+.sg-card-hdr{padding:9px 12px;border-bottom:0.5px solid var(--border-light);display:flex;align-items:center;justify-content:space-between;background:var(--sg-card-hdr)}
+.sg-otabs{display:flex;gap:0;padding:0 12px;border-bottom:0.5px solid var(--border-light);flex-wrap:wrap}
+.sg-otab{height:34px;padding:0 13px;border:none;border-bottom:2px solid transparent;background:transparent;font-size:11px;color:var(--text-muted);cursor:pointer;font-weight:400;font-family:'Rubik',sans-serif;transition:color .15s}
+.sg-otab:hover{color:var(--text-head)}
+.sg-otab.active{color:#239A0D;border-bottom-color:#32CE13;font-weight:500}
+.sg-tab-panel{display:none}
+.sg-tab-panel.active{display:block}
+.sg-tab-content{padding:10px 12px}
+.sg-tbl{width:100%;border-collapse:collapse;font-size:10px}
+.sg-tbl th{text-align:left;padding:6px 8px;background:var(--tbl-head-bg);border-bottom:0.5px solid var(--border);font-weight:500;color:var(--text-head);white-space:nowrap;font-size:9px;text-transform:uppercase;letter-spacing:.04em}
+.sg-tbl td{padding:6px 8px;border-bottom:0.5px solid var(--border-light);color:var(--text);font-size:10px;vertical-align:middle}
+.sg-tbl tr:nth-child(even) td{background:var(--bg)}
+.sg-inp{height:26px;padding:0 8px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--inp-bg);font-size:10px;color:var(--text);outline:none;font-family:'Rubik',sans-serif}
+.sg-inp:focus{border-color:#32CE13}
+.sg-sel{height:26px;padding:0 8px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--inp-bg);font-size:10px;color:var(--text);outline:none;min-width:155px;font-family:'Rubik',sans-serif}
+.sg-btn-edit{height:24px;padding:0 10px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--surface);font-size:10px;color:var(--badge-blue-c);cursor:pointer;white-space:nowrap;font-family:'Rubik',sans-serif}
+.sg-btn-save{height:24px;padding:0 10px;border:none;border-radius:999px;background:#32CE13;font-size:10px;color:#fff;cursor:pointer;white-space:nowrap;font-family:'Rubik',sans-serif}
+.sg-btn-cancel{height:24px;padding:0 10px;border:1.5px solid #FCA5A5;border-radius:999px;background:var(--badge-red-bg);font-size:10px;color:#B91C1C;cursor:pointer;white-space:nowrap;font-family:'Rubik',sans-serif}
+.sg-poc-card{background:var(--bg);border:0.5px solid var(--border);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.sg-poc-stat{background:var(--surface);border:0.5px solid var(--border);border-radius:8px;padding:6px 10px;min-width:80px}
+.sg-poc-stat-lbl{font-size:9px;color:var(--text-muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:2px}
+.sg-poc-stat-val{font-size:16px;font-weight:700;color:var(--text-head)}
+.sg-client-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;border-bottom:0.5px solid var(--border-light);font-size:10px}
+.sg-client-row:last-child{border-bottom:none}
+/* ── BenAd new UI (MatBen_UI) ── */
+.sss-form-table{width:100%;border-collapse:collapse;margin-bottom:14px;border:1px solid #d6eecc;border-radius:8px;overflow:hidden;}
+.sss-form-table tr{border-bottom:1px solid #e2f0de;}
+.sss-form-table tr:last-child{border-bottom:none;}
+.sss-lbl-cell{padding:11px 14px;font-size:12px;color:#1a1a1a;background:#f0f8ed;border-right:1px solid #d6eecc;width:240px;min-width:200px;vertical-align:middle;font-weight:400;}
+.sss-lbl-cell .req,.req{color:#cc0000;margin-right:2px;}
+.sss-val-cell{padding:8px 12px;background:#fff;vertical-align:middle;width:100%;}
+.sss-inp{height:34px;padding:0 12px;border:1px solid #c9d9c9;border-radius:4px;background:#fff;color:var(--text);font-size:12px;font-family:'Rubik',sans-serif;outline:none;width:100%;}
+.sss-inp:focus{border-color:#1a6e3e;outline:2px solid rgba(26,110,62,0.15);}
+.sss-sel{height:34px;padding:0 10px;border:1px solid #c9d9c9;border-radius:4px;background:#fff;color:var(--text);font-size:12px;font-family:'Rubik',sans-serif;outline:none;width:100%;}
+.soc-box{background:#f0f8ed;border:1px solid #d6eecc;border-radius:6px;padding:10px 14px;display:flex;gap:0;flex-wrap:wrap;margin-bottom:14px;}
+.soc-col{flex:1;min-width:160px;padding:6px 14px;border-right:1px solid #d6eecc;}
+.soc-col:first-child{padding-left:4px;}
+.soc-col:last-child{border-right:none;}
+.soc-lbl{font-size:9px;color:#6B6B67;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;}
+.soc-val{font-size:12px;font-weight:600;color:#033222;}
+.soc-sub{font-size:10px;color:#239A0D;margin-top:2px;}
+.req{color:#cc0000;margin-right:2px;}
+.benad-req-note{font-size:10px;color:#cc0000;margin-bottom:10px;}
+/* ── BenAd Components ── */
+.benad-card{background:#fff;border:0.5px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:1rem;box-shadow:0 2px 6px rgba(3,50,34,0.05);}
+.benad-sec-lbl{font-size:10px;font-weight:600;color:var(--text-head);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px;display:flex;align-items:center;gap:7px;}
+.benad-step-num{width:20px;height:20px;border-radius:50%;background:#033222;color:#fff;font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.benad-step-bar{display:flex;align-items:center;margin-bottom:1rem;background:#fff;border:0.5px solid var(--border);border-radius:10px;padding:10px 16px;box-shadow:0 1px 4px rgba(3,50,34,0.04);}
+.benad-sbi{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--text-muted);flex:1;}
+.benad-sbi.active{color:#033222;font-weight:500;}
+.benad-sbi.done{color:#239A0D;}
+.benad-sbc{width:22px;height:22px;border-radius:50%;border:1.5px solid var(--inp-border);background:#fff;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:500;color:var(--text-muted);flex-shrink:0;}
+.benad-sbi.active .benad-sbc{background:#033222;border-color:#033222;color:#fff;}
+.benad-sbi.done .benad-sbc{background:#E9FAE5;border-color:#32CE13;color:#239A0D;}
+.benad-sbl{width:32px;height:1.5px;background:var(--inp-border);margin:0 4px;flex-shrink:0;}
+.benad-sbl.done{background:#32CE13;}
+.benad-tbl-lbl{font-size:12px;font-weight:500;color:var(--text-head);margin:16px 0 6px;}
+.benad-btbl{width:100%;border-collapse:collapse;border:1px solid #2a6e40;}
+.benad-btbl thead th{background:#1a6e3a;color:#fff;padding:8px 11px;font-weight:500;font-size:12px;text-align:left;border-right:1px solid rgba(255,255,255,.2);}
+.benad-btbl thead th:last-child{border-right:none;}
+.benad-btbl tbody td{padding:8px 11px;border-bottom:1px solid #d6eecc;color:var(--text);border-right:1px solid #d6eecc;font-size:12px;vertical-align:middle;}
+.benad-btbl tbody td:last-child{border-right:none;}
+.benad-btbl tbody tr:nth-child(even) td{background:#f0f8ed;}
+.benad-btbl tfoot td{padding:9px 11px;background:#e8f5e0;font-weight:600;color:#033222;border-top:2px solid #2a6e40;font-size:12px;}
+.benad-ai{height:30px;padding:0 10px;border:1px solid #c9d9c9;border-radius:4px;background:#fff;color:var(--text);font-size:12px;outline:none;width:160px;text-align:right;font-family:'Rubik',sans-serif;}
+.benad-ai:focus{border-color:#1a6e3e;}
+.benad-ro{height:30px;padding:0 10px;border:1px solid #e0e0e0;border-radius:4px;background:#f7f7f7;color:#444;font-size:12px;display:inline-flex;align-items:center;justify-content:flex-end;width:160px;}
+.benad-add-btn{height:24px;width:24px;border:1.5px solid var(--inp-border);border-radius:50%;background:#E9FAE5;color:#239A0D;font-size:14px;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;flex-shrink:0;}
+.benad-add-btn:hover{background:#d0f0c8;}
+.benad-sal-warn{background:#FEF2F2;border:0.5px solid #FCA5A5;border-radius:8px;padding:8px 12px;font-size:11px;color:#B91C1C;margin-top:6px;display:none;}
+.benad-stat-strip{background:linear-gradient(135deg,#033222 0%,#0a5e1a 55%,#1a8a0a 100%);border-radius:12px;padding:11px;margin-bottom:1rem;}
+.benad-print-header{display:none;}
+.benad-print-only{display:none;}
+.benad-btn-back{height:30px;padding:0 14px;border:1px solid var(--border);border-radius:5px;background:var(--surface);color:var(--text-muted);font-size:12px;cursor:pointer;font-family:'Rubik',sans-serif;}
+.benad-btn-back:hover{border-color:#32CE13;color:#033222;}
+.benad-btn-print{height:36px;padding:0 20px;border:none;border-radius:999px;background:#033222;color:#fff;font-size:12px;cursor:pointer;font-weight:500;display:inline-flex;align-items:center;gap:7px;font-family:'Rubik',sans-serif;}
+.benad-btn-print:hover{background:#0a5e1a;}
+.msc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:12px;}
+.msc-cell{display:flex;flex-direction:column;gap:3px;}
+.msc-cell label{font-size:10px;color:var(--text-muted);}
+.msc-inp{height:32px;padding:0 10px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--inp-bg);color:var(--text);font-size:11px;font-family:'Rubik',sans-serif;outline:none;text-align:right;width:100%;}
+.msc-inp:focus{border-color:#32CE13;}
+.msc-inp.top6{border-color:#32CE13;background:#f5fff3;color:#033222;font-weight:500;}
+.res-tbl{width:100%;border-collapse:collapse;font-size:11px;border:1px solid #2a6e40;}
+.res-tbl thead th{background:#1a6e3a;color:#fff;padding:9px 11px;font-weight:600;font-size:11px;text-align:left;border-right:1px solid rgba(255,255,255,.2);}
+.res-tbl thead th:last-child{border-right:none;}
+.res-tbl tbody td{padding:9px 11px;border-bottom:1px solid #d6eecc;color:var(--text);border-right:1px solid #d6eecc;font-size:11px;vertical-align:middle;}
+.res-tbl tbody td:last-child{border-right:none;}
+.res-tbl tbody tr:nth-child(even) td{background:#f0f8ed;}
+.res-tbl tfoot td{padding:9px 11px;background:#e8f5e0;font-weight:700;color:#033222;border-top:2px solid #2a6e40;font-size:11px;}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;}
+.stat-card{background:rgba(255,255,255,0.13);border:1px solid rgba(255,255,255,0.2);border-radius:9px;padding:10px 12px;}
+.stat-lbl{font-size:9px;font-weight:600;color:rgba(255,255,255,0.55);text-transform:uppercase;letter-spacing:.05em;margin-bottom:3px;}
+.stat-val{font-size:13px;font-weight:700;color:#fff;}
+.stat-val.accent{color:#DFF566;font-size:16px;}
+.btn-sss{height:36px;padding:0 22px;border:none;border-radius:5px;background:#3b76b8;color:#fff;font-size:12px;cursor:pointer;font-weight:500;font-family:'Rubik',sans-serif;}
+.btn-sss:hover{background:#2f63a0;}
+.btn-green{height:36px;padding:0 20px;border:none;border-radius:999px;background:#32CE13;color:#fff;font-size:12px;cursor:pointer;font-weight:500;font-family:'Rubik',sans-serif;}
+.btn-green:hover{background:#28b510;}
+.cap-warn{background:#FFF4D3;border:0.5px solid #F59E0B;border-radius:8px;padding:8px 12px;font-size:11px;color:#A1470B;margin-top:10px;}
+.legend-row{display:flex;align-items:center;gap:16px;margin-bottom:10px;flex-wrap:wrap;}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:10px;color:#6B6B67;}
+.legend-dot{width:12px;height:12px;border-radius:999px;}
+</style>
+<style>
+#benad-app{min-height:100vh;}
+#benad-app .sidebar{width:220px;min-height:100vh;background:#033222;display:flex;flex-direction:column;flex-shrink:0;position:fixed;top:0;left:0;height:100vh;z-index:100;overflow:hidden;transition:width .2s;}
+#benad-app .sidebar.collapsed{width:56px;}
+#benad-app .main{flex:1;display:flex;flex-direction:column;min-width:0;min-height:100vh;margin-left:220px;transition:margin-left .2s;}
+#benad-app .main.collapsed{margin-left:56px;}
+.benad-req{color:#cc0000;margin-right:2px;}
+.benad-fi{height:34px;padding:0 12px;border:1px solid var(--inp-border);border-radius:4px;background:var(--inp-bg);color:var(--text);font-size:12px;outline:none;font-family:'Rubik',sans-serif;}
+.benad-fi:focus{border-color:#32CE13;}
+.benad-msc-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-bottom:8px;}
+.benad-msc-cell{display:flex;flex-direction:column;gap:3px;}
+.benad-msc-cell label{font-size:11px;color:var(--text-muted);text-align:center;}
+.benad-mi{height:32px;padding:0 5px;border:1.5px solid var(--inp-border);border-radius:999px;background:var(--inp-bg);color:var(--text);font-size:11px;outline:none;text-align:right;width:100%;font-family:'Rubik',sans-serif;}
+.benad-mi:focus{border-color:#32CE13;}
+.benad-mi.top6{border-color:#32CE13;background:var(--badge-green-bg);color:#033222;font-weight:500;}
+.benad-rename-inp{border:none;border-bottom:1px dashed var(--inp-border);background:transparent;color:var(--text);font-size:12px;outline:none;min-width:80px;padding:0 2px;font-family:'Rubik',sans-serif;}
+.benad-rename-inp:focus{border-bottom-color:#32CE13;}
+.benad-no-print{}
+.benad-print-only{display:none;}
+.hide-if-zero{display:none;}
+#benad-app .content{padding:1rem 1.5rem;}
+#benad-app .content>div{width:100%;max-width:none;}
+@media print{
+  @page{size:A4;margin:8mm 10mm;}
+  html,body{height:auto!important;}
+  #root{display:none!important;}
+  #benad-app{display:block!important;}
+  #benad-app .sidebar,#benad-app .topbar,.benad-step-bar,.benad-btn-back,.benad-btn-print,.benad-add-btn,.benad-stat-strip,.benad-no-print{display:none!important;}
+  #benad-app .main{margin-left:0!important;width:100%!important;}
+  #benad-app .content{padding:0!important;}
+  .benad-card{box-shadow:none!important;border:0.5px solid #ccc!important;border-radius:4px!important;padding:10px 12px!important;margin-bottom:8px!important;break-inside:avoid;}
+  .benad-print-header{display:block!important;}
+  .benad-print-only{display:table-row!important;}
+  .hide-if-zero{display:none!important;}
+  .res-tbl{width:100%!important;}
+  .res-tbl thead th{background:#1a6e3a!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .res-tbl tbody tr:nth-child(even) td{background:#f0f8ed!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .res-tbl tfoot td{background:#e8f5e0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .benad-btbl{width:100%!important;}
+  .benad-btbl thead th{background:#1a6e3a!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .benad-btbl tbody tr:nth-child(even) td{background:#f0f8ed!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .benad-btbl tfoot td{background:#e8f5e0!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  .benad-ai,.benad-ro{border:none!important;background:transparent!important;width:auto!important;height:auto!important;padding:0!important;}
+  .benad-sal-warn{display:none!important;}
+  .cap-warn{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+}
+</style>
+</head>
+<body>
+<div id="root"></div>
+
+<!-- ═══ BENAD APP — static, always in DOM, shown/hidden by render() ═══ -->
+<div id="benad-app" style="display:none;">
+<div class="app">
+<div class="sidebar" id="ba-sidebar">
+  <div class="sidebar-logo">
+    <svg width="30" height="30" viewBox="0 0 100 100" fill="none"><rect width="100" height="100" rx="22" fill="#1A3A1A"/><path d="M50 75 Q50 55 50 45" stroke="#32CE13" stroke-width="4" stroke-linecap="round"/><path d="M50 58 Q35 52 30 38 Q42 36 50 45 Q50 52 50 58Z" fill="#32CE13"/><path d="M50 45 Q62 30 72 32 Q70 46 58 50 Q54 51 50 50Z" fill="#32CE13"/></svg>
+    <div><div class="sidebar-logo-title">CompBen Connect</div><div class="sidebar-logo-sub">Sprout Solutions</div></div>
+  </div>
+  <nav class="nav">
+    <button class="nav-item" onclick="benadGoBack('sprout-gov')"><span class="nav-icon">🏛️</span><span class="nav-label">Sprout Gov</span></button>
+    <div>
+      <button class="nav-group-btn active" onclick="benadToggleBenAd()">
+        <span class="nav-icon">🛡️</span><span class="nav-label">Ben Ad</span>
+        <span class="nav-label nav-group-arrow open" id="ba-benad-arrow">▾</span>
+      </button>
+      <div class="nav-group-children open" id="ba-benad-children">
+        <button class="nav-item nav-child" id="ba-nav-maternity" onclick="benadNavigate('maternity')"><span class="nav-icon">🤱</span><span class="nav-label">Maternity Benefit</span></button>
+        <button class="nav-item nav-child" id="ba-nav-sickness" onclick="benadNavigate('sickness')"><span class="nav-icon">🏥</span><span class="nav-label">Sickness Benefit</span></button>
+        <button class="nav-item nav-child" id="ba-nav-processed" onclick="benadNavigate('processed')"><span class="nav-icon">📋</span><span class="nav-label">Processed Requests</span></button>
+      </div>
+    </div>
+    <div>
+      <button class="nav-group-btn" onclick="benadGoBack('gcash')"><span class="nav-icon">📋</span><span class="nav-label">Statutory Disbursement</span></button>
+    </div>
+  </nav>
+  <div class="sidebar-footer"><button class="collapse-btn" onclick="benadToggleSidebar()">◀</button></div>
+</div>
+<div class="main" id="ba-main">
+  <div class="topbar">
+    <div class="topbar-title" id="ba-topbar-title">🛡️ Benefits Administration</div>
+    <div class="topbar-actions">
+      <button class="btn-outline" style="font-size:13px;padding:0 10px;" onclick="benadToggleDark()" id="ba-dark-btn">🌙</button>
+      <button class="btn-outline" style="border-color:var(--border);color:var(--text-muted);" onclick="benadGoBack('gcash')">🚪 Back to App</button>
+    </div>
+  </div>
+  <div class="content">
+  <div style="width:100%;">
+
+  <!-- MATERNITY PAGE -->
+  <div id="page-maternity">
+    <!-- Step Bar -->
+    <div class="benad-step-bar">
+      <div class="benad-sbi active" id="mat-sb1"><div class="benad-sbc" id="mat-sbc1">1</div><span>Employee & Delivery Info</span></div>
+      <div class="benad-sbl" id="mat-sbl1"></div>
+      <div class="benad-sbi" id="mat-sb2"><div class="benad-sbc" id="mat-sbc2">2</div><span>Monthly Salary Credits</span></div>
+      <div class="benad-sbl" id="mat-sbl2"></div>
+      <div class="benad-sbi" id="mat-sb3"><div class="benad-sbc" id="mat-sbc3">3</div><span>Benefit Computation</span></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="benad-card" id="mat-s1">
+      <div class="benad-sec-lbl"><div class="benad-step-num">1</div> Employee & Delivery Information</div>
+      <div class="benad-req-note">* Required field</div>
+      <table class="sss-form-table">
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>Employee Name</td>
+          <td class="sss-val-cell"><input class="sss-inp" type="text" id="m-name" placeholder="Last Name, First Name M.I." oninput="syncPrint()" onblur="fmtName(this);syncPrint()"/></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>SS Number</td>
+          <td class="sss-val-cell"><input class="sss-inp" type="text" id="m-ss" placeholder="00-0000000-0" oninput="fmtSSN(this)"/></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>Date of Delivery / Miscarriage / ETP</td>
+          <td class="sss-val-cell"><input class="sss-inp" type="date" id="m-date" style="width:200px;max-width:260px;" oninput="onMatDate()"/></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>Delivery Type</td>
+          <td class="sss-val-cell">
+            <select class="sss-sel" id="m-dtype" onchange="onDtype()">
+              <option value="normal">Normal / Caesarean – Live Childbirth (105 days)</option>
+              <option value="solo">Solo Parent – Live Childbirth (120 days)</option>
+              <option value="miscarriage">Miscarriage / Termination of Pregnancy (60 days)</option>
+            </select>
+          </td>
+        </tr>
+      </table>
+      <div class="soc-box">
+        <div class="soc-col">
+          <div class="soc-lbl">Semester of Contingency</div>
+          <div class="soc-val" id="m-soc">—</div>
+        </div>
+        <div class="soc-col">
+          <div class="soc-lbl">12-Month Period Prior to Semester of Contingency</div>
+          <div class="soc-val" id="m-lookup">—</div>
+        </div>
+        <div class="soc-col">
+          <div class="soc-lbl">Maternity Leave Days</div>
+          <div class="soc-val" id="m-leavedays">105 days</div>
+          <div class="soc-sub" id="m-leavedays-sub">Normal / Caesarean</div>
+        </div>
+      </div>
+      <div id="mat-s1-err" style="display:none;background:#FEF2F2;border:0.5px solid #FCA5A5;border-radius:8px;padding:8px 12px;font-size:11px;color:#B91C1C;margin-bottom:10px;"></div>
+      <div style="display:flex;justify-content:flex-end;"><button class="btn-sss" onclick="matValidateStep1()">Next →</button></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="benad-card" id="mat-s2" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="benad-sec-lbl" style="margin-bottom:0;"><div class="benad-step-num">2</div> Monthly Salary Credits — <span id="m-msc-range">12 months</span></div>
+        <button class="benad-btn-back" onclick="matStep(1)">← Back</button>
+      </div>
+      <div style="font-size:11px;color:#6B6B67;margin-bottom:12px;">Enter the MSC for each of the 12 months. The 6 highest will be highlighted in green.</div>
+      <div class="msc-grid" id="m-mscGrid"></div>
+      <div style="background:#E9FAE5;border:0.5px solid #C9F3BE;border-radius:8px;padding:9px 12px;font-size:11px;color:#239A0D;margin-bottom:14px;">
+        6 Highest MSC: <strong style="color:#033222;" id="m-top6Months">—</strong>&nbsp;&nbsp;|&nbsp;&nbsp;Total MSC: <strong style="color:#033222;" id="m-top6Total">₱ 0.00</strong>
+      </div>
+      <div style="display:flex;justify-content:flex-end;"><button class="btn-green" onclick="matStep(3)">Proceed to Maternity Benefit Computation →</button></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="benad-card" id="mat-s3" style="display:none;">
+      <div class="benad-print-header" style="margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #033222;">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div><div style="font-size:13pt;font-weight:600;color:#033222;margin-bottom:7px;">Maternity Benefit Computation</div>
+          <table style="border-collapse:collapse;font-size:10pt;">
+            <tr><td style="color:#6B6B67;padding-right:12px;padding-bottom:3px;">Employee Name</td><td style="font-weight:500;padding-bottom:3px;" id="p-name">—</td></tr>
+            <tr><td style="color:#6B6B67;padding-right:12px;padding-bottom:3px;">SS Number</td><td style="font-weight:500;padding-bottom:3px;" id="p-ss">—</td></tr>
+            <tr><td style="color:#6B6B67;padding-right:12px;padding-bottom:3px;">Expected Delivery Date</td><td style="font-weight:500;padding-bottom:3px;" id="p-date">—</td></tr>
+            <tr><td style="color:#6B6B67;padding-right:12px;">Semester of Contingency</td><td style="font-weight:500;" id="p-soc">—</td></tr>
+          </table></div>
+          <div style="text-align:right;font-size:10pt;color:#6B6B67;"><div style="font-weight:600;color:#033222;">Benefits Administration</div><div>Sprout Solutions</div></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="benad-sec-lbl" style="margin-bottom:0;"><div class="benad-step-num">3</div> Maternity Benefit Computation</div>
+        <button class="benad-btn-back" onclick="matStep(2)">← Back</button>
+      </div>
+      <table class="res-tbl" style="margin-bottom:12px;">
+        <thead><tr><th>Component</th><th style="text-align:right;width:180px;">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>Total MSC</td><td style="text-align:right;" id="m-r-msc">₱ 0.00</td></tr>
+          <tr><td>Average Daily Salary Credit (ADSC)</td><td style="text-align:right;" id="m-r-adsc">₱ 0.00</td></tr>
+          <tr><td id="m-r-leaveLabel">Maternity Leave Days — Normal / Caesarean</td><td style="text-align:right;" id="m-r-leaveDays">105 days</td></tr>
+          <tr><td>Gross Maternity Benefit</td><td style="text-align:right;" id="m-r-gross">₱ 0.00</td></tr>
+          <tr id="m-r-cap-row" style="display:none;"><td style="color:#B91C1C;">Maximum Benefit Cap (<span id="m-r-cap-label">SSS maximum</span>)</td><td style="text-align:right;color:#B91C1C;">⚑ Capped</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total Maternity Benefit (For SSS Reimbursement)</td><td style="text-align:right;color:#239A0D;font-size:13px;" id="m-r-benefit">₱ 0.00</td></tr></tfoot>
+      </table>
+      <div id="m-cap-warn" class="cap-warn" style="display:none;"></div>
+
+      <div class="benad-tbl-lbl">Computation of Salary Differential</div>
+      <table class="benad-btbl"><thead><tr><th>Description</th><th style="text-align:right;width:180px;">Amount</th></tr></thead>
+        <tbody id="m-salDiffBody">
+          <tr id="m-row-base"><td>Base Monthly Salary</td><td style="text-align:right;"><input class="benad-ai" id="m-base" type="text" placeholder="₱ 0.00" oninput="calcMat()" onblur="fmtAI('m-base',calcMat)"/></td></tr>
+          <tr id="m-allow-addrow"><td class="benad-no-print"><span style="display:inline-flex;align-items:center;gap:7px;"><button class="benad-add-btn" onclick="addAllowance()">+</button><span style="color:#6B6B67;">Add Allowance</span></span></td><td></td></tr>
+          <tr><td id="m-monthlyRateLbl">Total Monthly Rate (Base + Allowances) × 3 months</td><td style="text-align:right;"><div class="benad-ro" id="m-totalMonthly">₱ 0.00</div></td></tr>
+          <tr id="m-addbens-addrow"><td class="benad-no-print"><span style="display:inline-flex;align-items:center;gap:7px;"><button class="benad-add-btn" onclick="addAddBenefit()">+</button><span style="color:#6B6B67;">Additional Benefits</span></span></td><td></td></tr>
+          <tr><td>Total Full Pay Amount</td><td style="text-align:right;"><div class="benad-ro" id="m-totalFP">₱ 0.00</div></td></tr>
+          <tr><td>Less: SSS Maternity Benefit</td><td style="text-align:right;" id="m-lessBen">− ₱ 0.00</td></tr>
+        </tbody>
+        <tfoot><tr><td>Salary Differential</td><td style="text-align:right;" id="m-salDiff">₱ 0.00</td></tr></tfoot>
+      </table>
+      <div class="benad-sal-warn" id="m-salWarn">⚠ Salary Differential is lower than the Total Maternity Benefit. Please review the Base Monthly Salary.</div>
+
+      <div class="benad-tbl-lbl">Government Contribution / Loan Deductions</div>
+      <table class="benad-btbl"><thead><tr><th>Deduction</th><th style="text-align:right;width:180px;">Monthly Amount</th></tr></thead>
+        <tbody>
+          <tr id="m-ded-sss"><td>SSS Contribution</td><td style="text-align:right;"><div class="benad-ro" id="m-sssC">₱ 0.00</div></td></tr>
+          <tr id="m-ded-phic"><td>PhilHealth</td><td style="text-align:right;"><div class="benad-ro" id="m-phic">₱ 0.00</div></td></tr>
+          <tr id="m-ded-pagibig"><td>Pag-IBIG</td><td style="text-align:right;"><div class="benad-ro" id="m-pagibig">₱ 200.00</div></td></tr>
+          <tr id="m-ded-pagibigL"><td>Pag-IBIG Loan</td><td style="text-align:right;"><input class="benad-ai" id="m-pagibigL" type="text" placeholder="₱ 0.00" oninput="calcMat()" onblur="fmtAI('m-pagibigL',calcMat)"/></td></tr>
+          <tr id="m-ded-sssL"><td>SSS Loan</td><td style="text-align:right;"><input class="benad-ai" id="m-sssL" type="text" placeholder="₱ 0.00" oninput="calcMat()" onblur="fmtAI('m-sssL',calcMat)"/></td></tr>
+          <tr id="m-othded-addrow"><td class="benad-no-print"><span style="display:inline-flex;align-items:center;gap:7px;"><button class="benad-add-btn" onclick="addOtherDed()">+</button><span style="color:#6B6B67;">Other Deductions</span></span></td><td></td></tr>
+          <tr><td id="m-dedMonthsLbl">Total Deductions × 3 months</td><td style="text-align:right;"><div class="benad-ro" id="m-totalDedRow">₱ 0.00</div></td></tr>
+        </tbody>
+        <tfoot><tr><td>Total Deductions</td><td style="text-align:right;color:#B91C1C;" id="m-totalDed">− ₱ 0.00</td></tr></tfoot>
+      </table>
+
+      <div class="benad-tbl-lbl">Summary</div>
+      <table class="benad-btbl"><thead><tr><th>Description</th><th style="text-align:right;width:180px;">Amount</th></tr></thead>
+        <tbody>
+          <tr><td>SSS Maternity Benefit</td><td style="text-align:right;" id="m-sumSSS">₱ 0.00</td></tr>
+          <tr><td>Total Salary Differential</td><td style="text-align:right;" id="m-sumTSD">₱ 0.00</td></tr>
+        </tbody>
+        <tfoot><tr><td>Total Full Pay</td><td style="text-align:right;color:#239A0D;" id="m-totalFull">₱ 0.00</td></tr></tfoot>
+      </table>
+
+      <div style="display:flex;justify-content:flex-end;margin-top:16px;" class="benad-no-print">
+        <button class="benad-btn-print" onclick="doPrint()"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;"><rect x="3" y="1" width="10" height="6" rx="1" stroke="#fff" stroke-width="1.4"/><path d="M3 7h10v5a1 1 0 01-1 1H4a1 1 0 01-1-1V7z" stroke="#fff" stroke-width="1.4"/><path d="M5 11h6M5 13h4" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><rect x="1" y="6" width="14" height="5" rx="1" stroke="#fff" stroke-width="1.4"/><circle cx="12" cy="8.5" r="0.8" fill="#fff"/></svg> Print Computation</button>
+      </div>
+    </div>
+
+    <!-- Stat Strip -->
+    <div class="benad-stat-strip" id="mat-statstrip" style="display:none;">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-lbl">Total MSC (Top 6)</div><div class="stat-val" id="m-st-msc">₱ 0</div></div>
+        <div class="stat-card"><div class="stat-lbl">ADSC (÷ 180)</div><div class="stat-val" id="m-st-adsc">₱ 0.00</div></div>
+        <div class="stat-card"><div class="stat-lbl">Leave Days</div><div class="stat-val" id="m-st-days">105 days</div></div>
+        <div class="stat-card"><div class="stat-lbl">Total Benefit</div><div class="stat-val accent" id="m-st1">₱ 0</div></div>
+      </div>
+    </div>
+  </div><!-- /page-maternity -->
+
+  <!-- SICKNESS PAGE -->
+  <div id="page-sickness" style="display:none;">
+    <!-- Step Bar -->
+    <div class="benad-step-bar">
+      <div class="benad-sbi active" id="sic-sb1"><div class="benad-sbc" id="sic-sbc1">1</div><span>Employee & Sickness Info</span></div>
+      <div class="benad-sbl" id="sic-sbl1"></div>
+      <div class="benad-sbi" id="sic-sb2"><div class="benad-sbc" id="sic-sbc2">2</div><span>Monthly Salary Credits</span></div>
+      <div class="benad-sbl" id="sic-sbl2"></div>
+      <div class="benad-sbi" id="sic-sb3"><div class="benad-sbc" id="sic-sbc3">3</div><span>Benefit Computation</span></div>
+    </div>
+
+    <!-- STEP 1 -->
+    <div class="benad-card" id="sic-s1">
+      <div class="benad-sec-lbl"><div class="benad-step-num">1</div> Employee & Sickness Information</div>
+      <div class="benad-req-note">* Required field</div>
+      <table class="sss-form-table">
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>Employee Name</td>
+          <td class="sss-val-cell"><input class="sss-inp" type="text" id="s-name" placeholder="Last Name, First Name M.I." onblur="fmtName(this)"/></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>SS Number</td>
+          <td class="sss-val-cell"><input class="sss-inp" type="text" id="s-ss" placeholder="00-0000000-0" oninput="fmtSSN(this)"/></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>Start of Sickness</td>
+          <td class="sss-val-cell"><input class="sss-inp" type="date" id="s-start" style="width:200px;max-width:260px;" oninput="onSicChange()"/></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>End of Coverage</td>
+          <td class="sss-val-cell"><input class="sss-inp" type="date" id="s-end" style="width:200px;max-width:260px;" readonly/></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell"><span class="req">*</span>Approved Sickness Days</td>
+          <td class="sss-val-cell"><div style="display:flex;align-items:center;gap:10px;"><input class="sss-inp" type="number" id="s-days" value="1" min="1" style="width:100px;text-align:center;" oninput="onSicChange()"/><span style="color:#6B6B67;font-size:12px;">days</span></div></td>
+        </tr>
+        <tr>
+          <td class="sss-lbl-cell">Utilized Paid Leave</td>
+          <td class="sss-val-cell"><div style="display:flex;align-items:center;gap:10px;"><input class="sss-inp" type="number" id="s-pl" value="0" min="0" style="width:100px;text-align:center;" oninput="calcSic()"/><span style="color:#6B6B67;font-size:12px;">days</span></div></td>
+        </tr>
+      </table>
+      <div class="soc-box">
+        <div class="soc-col">
+          <div class="soc-lbl">Semester of Contingency</div>
+          <div class="soc-val" id="s-soc">—</div>
+        </div>
+        <div class="soc-col">
+          <div class="soc-lbl">12-Month Period Prior to Semester of Contingency</div>
+          <div class="soc-val" id="s-lookup">—</div>
+        </div>
+        <div class="soc-col">
+          <div class="soc-lbl">Approved Sickness Days</div>
+          <div class="soc-val" id="s-daysDisplay">—</div>
+        </div>
+      </div>
+      <div id="sic-s1-err" style="display:none;background:#FEF2F2;border:0.5px solid #FCA5A5;border-radius:8px;padding:8px 12px;font-size:11px;color:#B91C1C;margin-bottom:10px;"></div>
+      <div style="display:flex;justify-content:flex-end;"><button class="btn-sss" onclick="sicValidateStep1()">Next →</button></div>
+    </div>
+
+    <!-- STEP 2 -->
+    <div class="benad-card" id="sic-s2" style="display:none;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="benad-sec-lbl" style="margin-bottom:0;"><div class="benad-step-num">2</div> Monthly Salary Credits — <span id="s-msc-range">12 months</span></div>
+        <button class="benad-btn-back" onclick="sicStep(1)">← Back</button>
+      </div>
+      <div style="font-size:11px;color:#6B6B67;margin-bottom:12px;">Enter the MSC for each of the 12 months. The 6 highest will be highlighted in green.</div>
+      <div class="msc-grid" id="s-mscGrid"></div>
+      <div style="background:#E9FAE5;border:0.5px solid #C9F3BE;border-radius:8px;padding:9px 12px;font-size:11px;color:#239A0D;margin-bottom:14px;">
+        6 Highest MSC: <strong style="color:#033222;" id="s-top6M">—</strong>&nbsp;&nbsp;|&nbsp;&nbsp;Total MSC: <strong style="color:#033222;" id="s-top6T">₱ 0.00</strong>
+      </div>
+      <div style="display:flex;justify-content:flex-end;"><button class="btn-green" onclick="sicStep(3)">Proceed to Sickness Benefit Computation →</button></div>
+    </div>
+
+    <!-- STEP 3 -->
+    <div class="benad-card" id="sic-s3" style="display:none;">
+      <div class="benad-print-header" style="margin-bottom:14px;padding-bottom:10px;border-bottom:2px solid #033222;">
+        <div style="display:flex;justify-content:space-between;">
+          <div><div style="font-size:13pt;font-weight:600;color:#033222;margin-bottom:7px;">Sickness Benefit Computation</div>
+          <table style="border-collapse:collapse;font-size:10pt;">
+            <tr><td style="color:#6B6B67;padding-right:12px;padding-bottom:3px;">Employee Name</td><td style="font-weight:500;padding-bottom:3px;" id="sp-name">—</td></tr>
+            <tr><td style="color:#6B6B67;padding-right:12px;padding-bottom:3px;">SS Number</td><td style="font-weight:500;padding-bottom:3px;" id="sp-ss">—</td></tr>
+            <tr><td style="color:#6B6B67;padding-right:12px;padding-bottom:3px;">Start of Sickness</td><td style="font-weight:500;padding-bottom:3px;" id="sp-date">—</td></tr>
+            <tr><td style="color:#6B6B67;padding-right:12px;">Semester of Contingency</td><td style="font-weight:500;" id="sp-soc">—</td></tr>
+          </table></div>
+          <div style="text-align:right;color:#6B6B67;font-size:10pt;"><div style="font-weight:600;color:#033222;">Benefits Administration</div><div>Sprout Solutions</div></div>
+        </div>
+      </div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+        <div class="benad-sec-lbl" style="margin-bottom:0;"><div class="benad-step-num">3</div> Sickness Benefit Computation</div>
+        <button class="benad-btn-back" onclick="sicStep(2)">← Back</button>
+      </div>
+      <table class="res-tbl" style="margin-bottom:12px;">
+        <thead><tr><th>Component</th><th style="text-align:right;width:180px;">Amount / Value</th></tr></thead>
+        <tbody>
+          <tr><td>Total MSC</td><td style="text-align:right;" id="s-r-msc">₱ 0.00</td></tr>
+          <tr><td>Average Daily Salary Credit (ADSC)</td><td style="text-align:right;" id="s-r-adsc">₱ 0.00</td></tr>
+          <tr><td>Daily Sickness Allowance (DSA)</td><td style="text-align:right;" id="s-r-dsa">₱ 0.00</td></tr>
+          <tr><td>Approved Sickness Days</td><td style="text-align:right;" id="s-r-days">—</td></tr>
+          <tr><td>Gross Sickness Benefit</td><td style="text-align:right;" id="s-r-gross">₱ 0.00</td></tr>
+          <tr id="s-plRow" style="display:none;">
+            <td style="color:#A1470B;">Less: Utilized Paid Leave <span style="font-size:11px;color:#6B6B67;background:#f3f3f3;border-radius:4px;padding:1px 6px;margin-left:6px;" id="s-plChip"></span></td>
+            <td style="text-align:right;color:#B91C1C;" id="s-plAmt">− ₱ 0.00</td>
+          </tr>
+        </tbody>
+        <tfoot><tr><td>Total Sickness Benefit (For SSS Reimbursement)</td><td style="text-align:right;color:#239A0D;font-size:13px;" id="s-r-total">₱ 0.00</td></tr></tfoot>
+      </table>
+      <div style="display:flex;justify-content:flex-end;margin-top:16px;" class="benad-no-print">
+        <button class="benad-btn-print" onclick="doSicPrint()"><svg width="14" height="14" viewBox="0 0 16 16" fill="none" style="flex-shrink:0;"><rect x="3" y="1" width="10" height="6" rx="1" stroke="#fff" stroke-width="1.4"/><path d="M3 7h10v5a1 1 0 01-1 1H4a1 1 0 01-1-1V7z" stroke="#fff" stroke-width="1.4"/><path d="M5 11h6M5 13h4" stroke="#fff" stroke-width="1.2" stroke-linecap="round"/><rect x="1" y="6" width="14" height="5" rx="1" stroke="#fff" stroke-width="1.4"/><circle cx="12" cy="8.5" r="0.8" fill="#fff"/></svg> Print Computation</button>
+      </div>
+    </div>
+
+    <!-- Stat Strip -->
+    <div class="benad-stat-strip" id="sic-statstrip" style="display:none;">
+      <div class="stat-grid">
+        <div class="stat-card"><div class="stat-lbl">Daily Sickness Allowance</div><div class="stat-val" id="s-st1">₱ 0.00</div></div>
+        <div class="stat-card"><div class="stat-lbl">Total Days of Sickness</div><div class="stat-val" id="s-st2">—</div></div>
+        <div class="stat-card"><div class="stat-lbl">Gross Benefit</div><div class="stat-val" id="s-st-gross">₱ 0.00</div></div>
+        <div class="stat-card"><div class="stat-lbl">Total Sickness Benefit</div><div class="stat-val accent" id="s-st3">₱ 0</div></div>
+      </div>
+    </div>
+  </div><!-- /page-sickness -->
+
+  <!-- PROCESSED REQUESTS PAGE -->
+  <div id="page-processed" style="display:none;">
+    <div class="benad-card" style="text-align:center;padding:3rem 2rem;">
+      <div style="font-size:44px;margin-bottom:16px;">📋</div>
+      <div style="font-size:15px;font-weight:600;color:#033222;margin-bottom:8px;">Processed Requests</div>
+      <div style="color:#6B6B67;font-size:13px;">Coming soon — this section will show all processed maternity and sickness benefit requests.</div>
+    </div>
+  </div><!-- /page-processed -->
+
+  </div>
+  </div><!-- /content -->
+</div><!-- /main -->
+</div><!-- /app -->
+</div><!-- /benad-app -->
+
+<script>
+/* ═══ BENAD NAVIGATION BRIDGE ═══ */
+function benadNavigate(page){
+  document.getElementById('page-maternity').style.display=page==='maternity'?'block':'none';
+  document.getElementById('page-sickness').style.display=page==='sickness'?'block':'none';
+  document.getElementById('page-processed').style.display=page==='processed'?'block':'none';
+  document.getElementById('ba-nav-maternity').className='nav-item nav-child'+(page==='maternity'?' active':'');
+  document.getElementById('ba-nav-sickness').className='nav-item nav-child'+(page==='sickness'?' active':'');
+  document.getElementById('ba-nav-processed').className='nav-item nav-child'+(page==='processed'?' active':'');
+  var titles={maternity:'🤱 Maternity Benefit Computation',sickness:'🏥 Sickness Benefit Computation',processed:'📋 Processed Requests'};
+  document.getElementById('ba-topbar-title').innerHTML='🛡️ Benefits Administration <span style="color:#6B6B67;font-weight:400;font-size:12px;">/ '+titles[page]+'</span>';
+  if(page==='maternity')matStep(1);
+  if(page==='sickness')sicStep(1);
+}
+function benadGoBack(section){
+  if(typeof S!=='undefined'){S.section=section;}
+  document.getElementById('benad-app').style.display='none';
+  document.getElementById('root').style.display='';
+  if(typeof render==='function')render();
+}
+function benadNavSync(section,sidebarOpen,darkMode){
+  var validSection=(section==='maternity'||section==='sickness'||section==='processed')?section:'maternity';
+  benadNavigate(validSection);
+  var ba=document.getElementById('benad-app');
+  if(ba)ba.className=darkMode?'dark':'';
+  var sidebar=document.getElementById('ba-sidebar');
+  var main=document.getElementById('ba-main');
+  if(sidebar)sidebar.className='sidebar'+(sidebarOpen?'':' collapsed');
+  if(main)main.className='main'+(sidebarOpen?'':' collapsed');
+  document.getElementById('ba-dark-btn').textContent=darkMode?'☀️':'🌙';
+}
+function benadToggleSidebar(){
+  if(typeof S!=='undefined'){S.sidebarOpen=!S.sidebarOpen;}
+  var sidebar=document.getElementById('ba-sidebar');
+  var main=document.getElementById('ba-main');
+  var isOpen=sidebar&&!sidebar.classList.contains('collapsed');
+  if(sidebar)sidebar.className='sidebar'+(isOpen?' collapsed':'');
+  if(main)main.className='main'+(isOpen?' collapsed':'');
+}
+function benadToggleDark(){
+  if(typeof S!=='undefined'){S.darkMode=!S.darkMode;localStorage.setItem('cbc_dark',S.darkMode?'1':'0');}
+  var ba=document.getElementById('benad-app');
+  var isDark=ba&&ba.classList.contains('dark');
+  if(ba)ba.className=isDark?'':'dark';
+  document.getElementById('ba-dark-btn').textContent=isDark?'🌙':'☀️';
+}
+function benadToggleBenAd(){
+  var ch=document.getElementById('ba-benad-children');
+  var ar=document.getElementById('ba-benad-arrow');
+  var isOpen=ch.style.maxHeight!=='0px'&&ch.style.maxHeight!=='0';
+  ch.style.maxHeight=isOpen?'0':'200px';
+  ar.className='nav-label nav-group-arrow'+(isOpen?'':' open');
+}
+
+/* ═══ BENAD CONSTANTS ═══ */
+var MSC_CAP=20000;
+var MS=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+var ML=['January','February','March','April','May','June','July','August','September','October','November','December'];
+var DT={normal:{lbl:'Normal / Caesarean',days:105,months:3,cap:70000},solo:{lbl:'Solo Parent \u2013 Live Childbirth',days:120,months:4,cap:80000},miscarriage:{lbl:'Miscarriage / Termination of Pregnancy',days:60,months:2,cap:70000}};
+var allowances=[],addBenefits=[],otherDeds=[];
+var allowSeq=0,benSeq=0,dedSeq=0;
+
+/* ═══ BENAD HELPERS ═══ */
+function fmt(n){return'\u20B1 '+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtNeg(n){return'\u2212 \u20B1 '+Number(n).toLocaleString('en-PH',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtStat(n){return'\u20B1 '+Number(n).toLocaleString('en-PH',{minimumFractionDigits:0,maximumFractionDigits:0});}
+function txt(id,v){var e=document.getElementById(id);if(e)e.textContent=v;}
+function pv(id){var e=document.getElementById(id);if(!e)return 0;return parseFloat(e.value.replace(/[^\d.]/g,''))||0;}
+function fmtSSN(el){var v=el.value.replace(/\D/g,'');if(v.length>2)v=v.slice(0,2)+'-'+v.slice(2);if(v.length>10)v=v.slice(0,10)+'-'+v.slice(10,11);el.value=v.slice(0,12);}
+function longDate(s){if(!s)return'—';var p=s.split('-');return ML[parseInt(p[1])-1]+' '+parseInt(p[2])+', '+p[0];}
+function fmtAI(id,cb){var e=document.getElementById(id);if(!e)return;var v=parseFloat(e.value.replace(/[^\d.]/g,''))||0;if(v>0)e.value=fmt(v);else e.value='';if(cb)cb();}
+function getSOC(dateStr){if(!dateStr)return{soc:'—',lookup:'—',mscMonths:[]};var d=new Date(dateStr),mo=d.getMonth(),y=d.getFullYear();var qStart;if(mo<=2)qStart=0;else if(mo<=5)qStart=3;else if(mo<=8)qStart=6;else qStart=9;var prevQ=qStart-3,prevY=y;if(prevQ<0){prevQ+=12;prevY=y-1;}var socLabel=MS[prevQ]+' '+prevY+' \u2013 '+MS[qStart+2]+' '+y;var mscMonths=[],lsm=prevQ-12,lsy=prevY;while(lsm<0){lsm+=12;lsy--;}for(var i=0;i<12;i++){var mm=(lsm+i)%12,yy=lsy+Math.floor((lsm+i)/12);mscMonths.push({label:MS[mm]+' '+yy});}var lookupLabel=mscMonths[0].label+' \u2013 '+mscMonths[11].label;return{soc:socLabel,lookup:lookupLabel,mscMonths:mscMonths};}
+function setMatDateRange(){var el=document.getElementById('m-date');if(!el)return;var now=new Date();var minD=new Date(now.getFullYear(),now.getMonth()-1,1);var maxD=new Date(now.getFullYear()+1,now.getMonth()+1,0);el.min=minD.getFullYear()+'-'+String(minD.getMonth()+1).padStart(2,'0')+'-01';el.max=maxD.getFullYear()+'-'+String(maxD.getMonth()+1).padStart(2,'0')+'-'+String(maxD.getDate()).padStart(2,'0');}
+function buildGrid(prefix,months){var grid=document.getElementById(prefix+'-mscGrid');if(!grid)return;grid.innerHTML='';var cb=prefix==='m'?calcMat:calcSic;for(var i=0;i<12;i++){var lbl=months?months[i].label:MS[i];var cell=document.createElement('div');cell.className='msc-cell';cell.innerHTML='<label id="'+prefix+'lbl'+i+'">'+lbl+'</label><input class="msc-inp" id="'+prefix+'msc'+i+'" type="text" value="'+fmt(0)+'" />';grid.appendChild(cell);(function(idx){var el=document.getElementById(prefix+'msc'+idx);el.addEventListener('focus',function(){var v=parseFloat(this.value.replace(/[^\d.]/g,''))||0;this.value=v===0?'':String(v);});el.addEventListener('blur',function(){var v=Math.min(parseFloat(this.value.replace(/[^\d.]/g,''))||0,MSC_CAP);this.value=fmt(v);cb();});el.addEventListener('input',cb);})(i);}}
+function top6(prefix){var vals=[],lbls=[];for(var i=0;i<12;i++){var el=document.getElementById(prefix+'msc'+i);var raw=el?parseFloat(el.value.replace(/[^\d.]/g,''))||0:0;if(raw>MSC_CAP&&el)el.value=fmt(MSC_CAP);vals.push(Math.min(raw,MSC_CAP));var lb=document.getElementById(prefix+'lbl'+i);lbls.push(lb?lb.textContent:'M'+(i+1));}var idx=vals.map(function(v,i){return{v:v,i:i};}).sort(function(a,b){return b.v-a.v;});var t6=idx.slice(0,6).map(function(x){return x.i;});var sum=t6.reduce(function(s,i){return s+vals[i];},0);t6.sort(function(a,b){return a-b;});for(var i=0;i<12;i++){var el=document.getElementById(prefix+'msc'+i);if(el)el.className='msc-inp'+(t6.indexOf(i)>=0?' top6':'');}return{sum:sum,months:t6.map(function(i){return lbls[i];})};}
+function addAllowance(){
+  if(allowances.length>=5)return;
+  var id='al'+allowSeq++;
+  allowances.push({id:id,name:'',val:0});
+  // Append only the new row — do NOT rebuild all rows (preserves existing values)
+  var anchor=document.getElementById('m-allow-addrow');
+  var i=allowances.length-1;
+  var a=allowances[i];
+  var tr=document.createElement('tr');tr.className='allow-row';tr.id='tr-'+a.id;
+  tr.innerHTML='<td><span style="display:inline-flex;align-items:center;gap:7px;"><input class="benad-rename-inp benad-no-print" id="nm-'+a.id+'" placeholder="e.g. Transportation" value="" onchange="allowances['+i+'].name=this.value;calcMat();" /><span class="benad-print-only" id="pnm-'+a.id+'"></span></span></td><td style="text-align:right;"><input class="benad-ai" id="v-'+a.id+'" type="text" placeholder="\u20B1 0.00" oninput="allowances['+i+'].val=parseFloat(this.value.replace(/[^\\d.]/g,\'\'))||0;calcMat();" onblur="fmtAI(\'v-'+a.id+'\',calcMat);" /></td>';
+  anchor.parentNode.insertBefore(tr,anchor);
+  calcMat();
+}
+function renderAllowances(){document.querySelectorAll('.allow-row').forEach(function(r){r.remove();});var anchor=document.getElementById('m-allow-addrow');allowances.forEach(function(a,i){var tr=document.createElement('tr');tr.className='allow-row';tr.id='tr-'+a.id;tr.innerHTML='<td><span style="display:inline-flex;align-items:center;gap:7px;"><input class="benad-rename-inp benad-no-print" id="nm-'+a.id+'" value="'+a.name+'" onchange="allowances['+i+'].name=this.value;calcMat();" /><span class="benad-print-only" id="pnm-'+a.id+'">'+a.name+'</span></span></td><td style="text-align:right;"><input class="benad-ai" id="v-'+a.id+'" type="text" placeholder="\u20B1 0.00" oninput="allowances['+i+'].val=parseFloat(this.value.replace(/[^\\d.]/g,\'\'))||0;calcMat();" onblur="fmtAI(\'v-'+a.id+'\',calcMat);" /></td>';anchor.parentNode.insertBefore(tr,anchor);});calcMat();}
+function addAddBenefit(){if(addBenefits.length>=5)return;var id='bn'+benSeq++;addBenefits.push({id:id,name:'Additional Benefits',val:0});renderBenefits();}
+function renderBenefits(){document.querySelectorAll('.ben-row').forEach(function(r){r.remove();});var anchor=document.getElementById('m-addbens-addrow');addBenefits.forEach(function(b,i){var tr=document.createElement('tr');tr.className='ben-row';tr.id='tr-'+b.id;tr.innerHTML='<td><span style="display:inline-flex;align-items:center;gap:7px;"><input class="benad-rename-inp benad-no-print" id="nm-'+b.id+'" value="'+b.name+'" onchange="addBenefits['+i+'].name=this.value;calcMat();" /><span class="benad-print-only" id="pnm-'+b.id+'">'+b.name+'</span></span></td><td style="text-align:right;"><input class="benad-ai" id="v-'+b.id+'" type="text" placeholder="\u20B1 0.00" oninput="addBenefits['+i+'].val=parseFloat(this.value.replace(/[^\\d.]/g,\'\'))||0;calcMat();" onblur="fmtAI(\'v-'+b.id+'\',calcMat);" /></td>';anchor.parentNode.insertBefore(tr,anchor);});calcMat();}
+function addOtherDed(){if(otherDeds.length>=5)return;var id='od'+dedSeq++;otherDeds.push({id:id,name:'Other Deductions',val:0});renderOtherDeds();}
+function renderOtherDeds(){document.querySelectorAll('.oded-row').forEach(function(r){r.remove();});var anchor=document.getElementById('m-othded-addrow');otherDeds.forEach(function(d,i){var tr=document.createElement('tr');tr.className='oded-row';tr.id='tr-'+d.id;tr.innerHTML='<td><span style="display:inline-flex;align-items:center;gap:7px;"><input class="benad-rename-inp benad-no-print" id="nm-'+d.id+'" value="'+d.name+'" onchange="otherDeds['+i+'].name=this.value;calcMat();" /><span class="benad-print-only" id="pnm-'+d.id+'">'+d.name+'</span></span></td><td style="text-align:right;"><input class="benad-ai" id="v-'+d.id+'" type="text" placeholder="\u20B1 0.00" oninput="otherDeds['+i+'].val=parseFloat(this.value.replace(/[^\\d.]/g,\'\'))||0;calcMat();" onblur="fmtAI(\'v-'+d.id+'\',calcMat);" /></td>';anchor.parentNode.insertBefore(tr,anchor);});calcMat();}
+function onMatDate(){var dateStr=document.getElementById('m-date').value;var r=getSOC(dateStr);txt('m-soc',r.soc);txt('m-lookup',r.lookup);if(r.mscMonths.length){txt('m-msc-range',r.mscMonths[0].label+' to '+r.mscMonths[11].label);}buildGrid('m',r.mscMonths);syncPrint();}
+function onDtype(){var sel=document.getElementById('m-dtype');var dt=DT[sel?sel.value:'normal']||DT.normal;txt('m-leavedays',dt.days+' days');txt('m-leavedays-sub',dt.lbl);txt('m-r-leaveLabel','Maternity Leave Days \u2014 '+dt.lbl);txt('m-r-leaveDays',dt.days+' days');txt('m-monthlyRateLbl','Total Monthly Rate (Base + Allowances) \u00d7 '+dt.months+' months');txt('m-dedMonthsLbl','Total Deductions \u00d7 '+dt.months+' months');calcMat();}
+function syncPrint(){var name=document.getElementById('m-name').value||'—';var ss=document.getElementById('m-ss').value||'—';var date=longDate(document.getElementById('m-date').value);var soc=document.getElementById('m-soc').textContent;txt('p-name',name);txt('p-ss',ss);txt('p-date',date);txt('p-soc',soc);}
+function calcMat(){var info=top6('m');txt('m-top6Months',info.months.join(', '));txt('m-top6Total',fmt(info.sum));var sel=document.getElementById('m-dtype');var dt=DT[sel?sel.value:'normal']||DT.normal;var adsc=info.sum/180;var gross=adsc*dt.days;var capped=gross>dt.cap;var benefit=capped?dt.cap:gross;
+  txt('m-r-msc',fmt(info.sum));
+  txt('m-r-adsc',fmt(adsc));
+  txt('m-r-gross',fmt(gross));
+  txt('m-r-benefit',fmt(benefit));
+  // cap row
+  var capRow=document.getElementById('m-r-cap-row');var capWarn=document.getElementById('m-cap-warn');
+  if(capped){if(capRow)capRow.style.display='';txt('m-r-cap-label','SSS maximum: '+fmt(dt.cap));if(capWarn){capWarn.style.display='block';capWarn.innerHTML='\u26d1 Gross benefit of '+fmt(gross)+' exceeds the SSS maximum of <strong>'+fmt(dt.cap)+'</strong>. The final benefit has been capped accordingly.';}}
+  else{if(capRow)capRow.style.display='none';if(capWarn)capWarn.style.display='none';}
+  txt('m-sumSSS',fmt(benefit));
+  // salary differential
+  var base=pv('m-base');var totalAllow=allowances.reduce(function(s,a){return s+a.val;},0);var totalBen=addBenefits.reduce(function(s,b){return s+b.val;},0);var pagibigL=pv('m-pagibigL'),sssL=pv('m-sssL');var otherTotal=otherDeds.reduce(function(s,d){return s+d.val;},0);var totalMonthly=(base+totalAllow)*dt.months;var totalFP=totalMonthly+totalBen;var salDiff=totalFP-benefit;var sssC=(base+totalAllow)>=35000?1750:(base+totalAllow)*0.05;var phic=base>=100000?2500:base*0.025;var pagibig=200;var monthlyDed=sssC+phic+pagibig+pagibigL+sssL+otherTotal;var totalDed=monthlyDed*dt.months;var netDiff=salDiff-totalDed;var totalFull=benefit+netDiff;
+  txt('m-totalMonthly',fmt(totalMonthly));txt('m-totalFP',fmt(totalFP));txt('m-pagibig',fmt(pagibig));var lb=document.getElementById('m-lessBen');if(lb)lb.textContent='\u2212 '+fmt(benefit);txt('m-sssC',fmt(sssC));txt('m-phic',fmt(phic));txt('m-totalDedRow',fmt(totalDed));txt('m-totalDed',fmtNeg(totalDed));txt('m-sumTSD',fmt(netDiff));txt('m-totalFull',fmt(totalFull));
+  // stat strip
+  txt('m-st-msc',fmt(info.sum));txt('m-st-adsc',fmt(adsc));txt('m-st-days',dt.days+' days');txt('m-st1',fmt(benefit));
+  // salary diff colour — red + warning only when NEGATIVE
+  var sdEl=document.getElementById('m-salDiff');var warnEl=document.getElementById('m-salWarn');if(sdEl){if(salDiff<0){sdEl.style.color='#B91C1C';sdEl.textContent=fmt(salDiff);if(warnEl)warnEl.style.display='block';}else{sdEl.style.color='#239A0D';sdEl.textContent=fmt(salDiff);if(warnEl)warnEl.style.display='none';}}}
+function doPrint(){allowances.forEach(function(a){var row=document.getElementById('tr-'+a.id);if(row){if(a.val===0)row.classList.add('hide-if-zero');else row.classList.remove('hide-if-zero');}var pnm=document.getElementById('pnm-'+a.id);if(pnm)pnm.textContent=a.name;});addBenefits.forEach(function(b){var row=document.getElementById('tr-'+b.id);if(row){if(b.val===0)row.classList.add('hide-if-zero');else row.classList.remove('hide-if-zero');}var pnm=document.getElementById('pnm-'+b.id);if(pnm)pnm.textContent=b.name;});[{rid:'m-ded-pagibigL',vid:'m-pagibigL'},{rid:'m-ded-sssL',vid:'m-sssL'}].forEach(function(p){var row=document.getElementById(p.rid);var val=pv(p.vid);if(row){if(val===0)row.classList.add('hide-if-zero');else row.classList.remove('hide-if-zero');}});otherDeds.forEach(function(d){var row=document.getElementById('tr-'+d.id);if(row){if(d.val===0)row.classList.add('hide-if-zero');else row.classList.remove('hide-if-zero');}var pnm=document.getElementById('pnm-'+d.id);if(pnm)pnm.textContent=d.name;});syncPrint();
+  var raw=(document.getElementById('m-name').value||'').trim();
+  var parts=raw.split(',');
+  var lastName=(parts[0]||'').trim();
+  var firstParts=(parts[1]||'').trim().split(/\s+/);
+  var firstName=firstParts.slice(0,2).join(' ');
+  var parsedName=lastName&&firstName?lastName+', '+firstName:raw;
+  var oldTitle=document.title;
+  if(parsedName)document.title='Maternity Benefit Computation_'+parsedName;
+  window.print();document.title=oldTitle;
+  setTimeout(function(){allowances.forEach(function(a){var r=document.getElementById('tr-'+a.id);if(r)r.classList.remove('hide-if-zero');});addBenefits.forEach(function(b){var r=document.getElementById('tr-'+b.id);if(r)r.classList.remove('hide-if-zero');});['m-ded-pagibigL','m-ded-sssL'].forEach(function(id){var r=document.getElementById(id);if(r)r.classList.remove('hide-if-zero');});otherDeds.forEach(function(d){var r=document.getElementById('tr-'+d.id);if(r)r.classList.remove('hide-if-zero');});},500);}
+function onSicChange(){var dateStr=document.getElementById('s-start').value;var days=parseInt(document.getElementById('s-days').value)||0;var r=getSOC(dateStr);txt('s-soc',r.soc);txt('s-lookup',r.lookup);txt('s-daysDisplay',days?days+' days':'—');if(r.mscMonths.length)txt('s-msc-range',r.mscMonths[0].label+' to '+r.mscMonths[11].label);buildGrid('s',r.mscMonths);if(dateStr&&days){var s=new Date(dateStr);s.setDate(s.getDate()+days-1);document.getElementById('s-end').value=s.getFullYear()+'-'+String(s.getMonth()+1).padStart(2,'0')+'-'+String(s.getDate()).padStart(2,'0');}else document.getElementById('s-end').value='';txt('sp-date',longDate(dateStr));txt('sp-soc',r.soc);calcSic();}
+function calcSic(){var info=top6('s');txt('s-top6M',info.months.join(', '));txt('s-top6T',fmt(info.sum));var adsc=info.sum/180,dsa=adsc*0.9;var days=parseInt(document.getElementById('s-days').value)||0;var pl=parseInt(document.getElementById('s-pl').value)||0;var gross=dsa*days,plAmt=dsa*pl,total=gross-plAmt;txt('s-r-msc',fmt(info.sum));txt('s-r-adsc',fmt(adsc));txt('s-r-dsa',fmt(dsa));txt('s-r-days',days?days+' days':'—');txt('s-r-gross',fmt(gross));txt('s-r-total',fmt(total));var plRow=document.getElementById('s-plRow');if(pl>0){plRow.style.display='';txt('s-plChip',pl+' days \u00d7 \u20b1'+adsc.toFixed(2)+' \u00d7 90%');txt('s-plAmt','\u2212 '+fmt(plAmt));}else plRow.style.display='none';txt('s-st1',fmt(dsa));txt('s-st2',days?days+' days':'—');txt('s-st-gross',fmt(gross));txt('s-st3',fmtStat(total));}
+function doSicPrint(){txt('sp-name',document.getElementById('s-name').value||'—');txt('sp-ss',document.getElementById('s-ss').value||'—');
+  var raw=(document.getElementById('s-name').value||'').trim();
+  var parts=raw.split(',');
+  var lastName=(parts[0]||'').trim();
+  var firstParts=(parts[1]||'').trim().split(/\s+/);
+  var firstName=firstParts.slice(0,2).join(' ');
+  var parsedName=lastName&&firstName?lastName+', '+firstName:raw;
+  var oldTitle=document.title;
+  if(parsedName)document.title='Sickness Benefit_'+parsedName;
+  window.print();document.title=oldTitle;}
+function updateBar(prefix,n){for(var i=1;i<=3;i++){var item=document.getElementById(prefix+'-sb'+i),circ=document.getElementById(prefix+'-sbc'+i);if(item)item.className='benad-sbi'+(i<n?' done':i===n?' active':'');if(circ)circ.textContent=i<n?'✓':String(i);}var l1=document.getElementById(prefix+'-sbl1'),l2=document.getElementById(prefix+'-sbl2');if(l1)l1.className='benad-sbl'+(n>1?' done':'');if(l2)l2.className='benad-sbl'+(n>2?' done':'');}
+function matValidateStep1(){var name=(document.getElementById('m-name').value||'').trim();var ss=(document.getElementById('m-ss').value||'').trim();var date=(document.getElementById('m-date').value||'').trim();var errs=[];if(!name)errs.push('Employee Name is required.');if(!ss)errs.push('SS Number is required.');if(!date)errs.push('Date of Delivery / Miscarriage / ETP is required.');var errEl=document.getElementById('mat-s1-err');if(errs.length){errEl.style.display='block';errEl.innerHTML='⚠ '+errs.join(' &nbsp;|&nbsp; ');}else{errEl.style.display='none';matStep(2);}}
+function sicValidateStep1(){var name=(document.getElementById('s-name').value||'').trim();var ss=(document.getElementById('s-ss').value||'').trim();var date=(document.getElementById('s-start').value||'').trim();var days=parseInt(document.getElementById('s-days').value)||0;var errs=[];if(!name)errs.push('Employee Name is required.');if(!ss)errs.push('SS Number is required.');if(!date)errs.push('Start of Sickness is required.');if(!days||days<1)errs.push('Approved Sickness Days must be at least 1.');var errEl=document.getElementById('sic-s1-err');if(errs.length){errEl.style.display='block';errEl.innerHTML='⚠ '+errs.join(' &nbsp;|&nbsp; ');}else{errEl.style.display='none';sicStep(2);}}
+function matStep(n){for(var i=1;i<=3;i++){var s=document.getElementById('mat-s'+i);if(s)s.style.display=i===n?'block':'none';}var ss=document.getElementById('mat-statstrip');if(ss)ss.style.display=n===3?'block':'none';updateBar('mat',n);if(n===3){syncPrint();calcMat();}window.scrollTo({top:0,behavior:'smooth'});}
+function sicStep(n){for(var i=1;i<=3;i++){var s=document.getElementById('sic-s'+i);if(s)s.style.display=i===n?'block':'none';}var ss=document.getElementById('sic-statstrip');if(ss)ss.style.display=n===3?'block':'none';updateBar('sic',n);if(n===3){txt('sp-name',document.getElementById('s-name').value||'—');txt('sp-ss',document.getElementById('s-ss').value||'—');calcSic();}window.scrollTo({top:0,behavior:'smooth'});}
+
+/* ═══ NAME FORMATTER ═══ */
+function fmtName(el){
+  var raw=(el.value||'').trim();
+  if(!raw)return;
+  // Capitalise first letter of each word, lowercase the rest
+  function capWords(str){return str.replace(/\b\w+/g,function(w){return w.length===1?w.toUpperCase()+'.':(w.charAt(0).toUpperCase()+w.slice(1).toLowerCase());});}
+  // Check if comma already present
+  if(raw.indexOf(',')>=0){
+    var parts=raw.split(',');
+    var ln=capWords(parts[0].trim());
+    var fn=capWords(parts.slice(1).join(',').trim());
+    el.value=ln+', '+fn;
+  } else {
+    // First word = last name, rest = first name + MI
+    var words=raw.split(/\s+/);
+    var ln=capWords(words[0]);
+    var fn=words.length>1?capWords(words.slice(1).join(' ')):'';
+    el.value=fn?ln+', '+fn:ln;
+  }
+}
+
+/* ═══ BENAD INIT ═══ */
+(function(){
+  setMatDateRange();
+  buildGrid('m',null);
+  buildGrid('s',null);
+  onDtype();
+})();
+</script>
+<script>
+(function(){
+var SK="gcash_v3",CK="check_v1",AK="cbc_apikey";
+function dbGet(k){try{var v=localStorage.getItem(k);return v?JSON.parse(v):null;}catch(e){return null;}}
+function dbSet(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+function getApiKey(){return localStorage.getItem(AK)||"";}
+function setApiKey(k){localStorage.setItem(AK,k);}
+function removeApiKey(){localStorage.removeItem(AK);}
+
+var LIMIT=100000,PAGE_SIZE=10;
+var AGENCIES=["PhilHealth","HDMF Contribution","HDMF Loans","HDMF MP2"];
+var GOV_REMS=["SSS Contribution Check","SSS Loan Check","HDMF Contribution Check","HDMF Loan Check","BIR 1601c Check","PhilHealth Contribution Check"];
+var CHECK_TYPES=["Manager's Check","Regular Check"];
+var CHECK_STATUSES=["Pending","Waiting for Appointment Number","For Check Pick Up","Successful Check Pick Up","Paid"];
+var GCASH_STATUSES=["Pending","Paid","Cancelled"];
+var MONTHS=["January","February","March","April","May","June","July","August","September","October","November","December"];
+var CLIENTS=["Best BPO","Chalo","Cipriano","District Photo","Foreign Cultural","HH No Entry","Medley","Natives","Point Digital","ProCredit","Provenance","RachNet","RCM","Vitreous Alliance"];
+var TXN_FEE={"PhilHealth":15,"HDMF Contribution":7,"HDMF Loans":7,"HDMF MP2":7};
+var USERS=[{name:"Member",role:"member",pin:"1111"},{name:"Scheduler",role:"scheduler",pin:"2222"},{name:"Approver",role:"approver",pin:"9999"}];
+var GCASH_HDRS=["Client","Agency","Remittance Type","Applicable Month","Amount","HDMF PIN","Deadline","Status"];
+var CHECK_HDRS=["Client Name","Remittance Type","Applicable Month","Government Remittance","Check Payee","Type of Check","Amount","Date of Request","Requested By","Status","Date of Payment"];
+var SG_POCS=["Alva","Denise","Mhae","Pau","Marix","Zona","Zab","Marix - Under Implem","Alva - Under Implem","Mhae - Under Implem","Pau - Under Implem","Zab - Under Implem","Under Implem - Unassigned","Need Resource","Churned/ Will Not Continue"];
+
+function fmt(n){return"\u20B1"+Number(n).toLocaleString("en-PH",{minimumFractionDigits:2,maximumFractionDigits:2});}
+function fmtD(iso){if(!iso||iso==="—")return"—";if(iso.indexOf("-")===-1)return iso;var p=iso.split("-");if(p.length<3||!p[0]||!p[1]||!p[2])return iso;return p[1]+"/"+p[2]+"/"+p[0];}
+function isLatePayment(e){if(!e.paymentDate||!e.deadline)return false;return e.paymentDate>e.deadline;}
+function todayISO(){var n=new Date();return n.getFullYear()+"-"+pad(n.getMonth()+1)+"-"+pad(n.getDate());}
+function pad(n){return String(n).padStart(2,"0");}
+function prevMonth(){var n=new Date();var p=new Date(n.getFullYear(),n.getMonth()-1,1);return MONTHS[p.getMonth()]+" "+p.getFullYear();}
+function dlOpts(agency,client){var n=new Date();var y=n.getFullYear();var m=pad(n.getMonth()+1);var lastDay=new Date(y,n.getMonth()+1,0).getDate();if(agency==="PhilHealth"){return[{l:"Every 15th",v:y+"-"+m+"-15"},{l:"Every 20th",v:y+"-"+m+"-20"}];}if(agency==="HDMF Loans"){return[{l:"Every 15th",v:y+"-"+m+"-15"}];}if(agency==="HDMF Contribution"||agency==="HDMF MP2"){var dl=hdmfContribDeadline(client||"",y,m,lastDay);return[{l:"Deadline "+fmtD(dl),v:dl}];}return[{l:"Every 15th",v:y+"-"+m+"-15"},{l:"Every 20th",v:y+"-"+m+"-20"}];}
+function hdmfContribDeadline(client,y,m,lastDay){var first=(client||"").trim().charAt(0).toUpperCase();if(/[0-9]/.test(first)||/[R-Z]/.test(first))return y+"-"+m+"-"+pad(lastDay);if(/[M-Q]/.test(first))return y+"-"+m+"-24";if(/[E-L]/.test(first))return y+"-"+m+"-19";return y+"-"+m+"-14";}
+function deadlineFromPEN(pen){if(!pen)return"";var last=parseInt(pen.replace(/\D/g,"").slice(-1),10);if(isNaN(last))return"";var n=new Date();var y=n.getFullYear();var m=pad(n.getMonth()+1);return last<=4?y+"-"+m+"-15":y+"-"+m+"-20";}
+function getPayee(g){if(!g)return"\u2014";if(g.indexOf("SSS")===0)return"Social Security System";if(g.indexOf("HDMF")===0)return"PAG IBIG Fund";if(g.indexOf("PhilHealth")===0)return"PhilHealth";return"\u2014";}
+function escCSV(v){var s=v==null?"":String(v);return(s.indexOf(",")>=0||s.indexOf('"')>=0||s.indexOf("\n")>=0)?'"'+s.replace(/"/g,'""')+'"':s;}
+function toCSV(hdrs,rows){return[hdrs].concat(rows).map(function(r){return r.map(escCSV).join(",");}).join("\r\n");}
+function parseCSVLine(line){var res=[],cur="",inQ=false;for(var i=0;i<line.length;i++){var c=line[i];if(c==='"'){if(inQ&&line[i+1]==='"'){cur+='"';i++;}else inQ=!inQ;}else if(c===","&&!inQ){res.push(cur.trim());cur="";}else cur+=c;}res.push(cur.trim());return res;}
+function downloadCSV(fn,hdrs,rows){var csv="\uFEFF"+toCSV(hdrs,rows);var blob=new Blob([csv],{type:"text/csv;charset=utf-8;"});var url=URL.createObjectURL(blob);var a=document.createElement("a");a.href=url;a.download=fn;document.body.appendChild(a);a.click();document.body.removeChild(a);setTimeout(function(){URL.revokeObjectURL(url);},1000);}
+
+var S={
+  user:null,section:"gcash",sidebarOpen:true,sidebarGroupOpen:true,benAdOpen:true,drawerOpen:false,darkMode:false,
+  gcash:{entries:[],idSeq:0,scheduled:false,dayDates:{}},
+  check:{requests:[],idSeq:0},
+  gcashForm:{client:"",agency:"",amount:"",mp2pin:"",deadline:"",remType:"uptodate",appMonth:prevMonth(),pdMonth:"",pdYear:new Date().getFullYear(),pdfFile:null,pdfName:"",extracting:false,extractErr:"",pen:""},
+  checkForm:{clientName:"",govRem:"",appMonth:prevMonth(),remType:"uptodate",pdMonth:"",pdYear:new Date().getFullYear(),typeOfCheck:"",amount:"",dateOfReq:todayISO(),reqBy:"",attachFile:null,attachName:""},
+  gcashFilter:{client:"",agency:"",remType:"",appMonth:"",deadline:"",status:"",showCancelled:false,filterMode:false,page:1},
+  gcashCollapsed:{},
+  checkFilter:{client:"",type:"all",page:1},
+  gcashTab:"schedule",gcashFormErr:"",checkFormErr:"",toast:false,openColFilter:null
+};
+
+// Sprout Gov state — persisted separately
+var SG={
+  clients:[
+    {id:1,accounts:2,client:"Seedbox Technologies",sub:false,hc:45,month:"March",year:2026,poc:"Alva",services:["Sprout Gov","Ben Ad Services"],sss:"Every 10th",phic:"Every 15th",bir:"Every 20th",hdmf:"Every 10th",remarks:"—",mrrBase:6500,mrrRemarks:""},
+    {id:2,accounts:null,client:"Seedbox Sec.",sub:true,hc:20,month:"March",year:2026,poc:"Alva",services:["Sprout Gov","Ben Ad Services"],sss:"Every 10th",phic:"Every 15th",bir:"Every 20th",hdmf:"Every 10th",remarks:"—",mrrBase:0,mrrRemarks:""},
+    {id:3,accounts:1,client:"Best BPO Solutions",sub:false,hc:150,month:"Jan",year:2026,poc:"Denise",services:["Sprout Gov"],sss:"Every 5th",phic:"Every 10th",bir:"Every 15th",hdmf:"Every 5th",remarks:"—",mrrBase:6500,mrrRemarks:""},
+    {id:4,accounts:1,client:"Point Digital",sub:false,hc:95,month:"Feb",year:2026,poc:"Mhae",services:["Sprout Gov","Statutory Disbursement"],sss:"Every 10th",phic:"Every 15th",bir:"Every 25th",hdmf:"Every 10th",remarks:"—",mrrBase:6500,mrrRemarks:""}
+  ],
+  churned:[
+    {id:1,client:"Medley Corp",hc:80,month:"Jan",year:2025,poc:"Churned/ Will Not Continue",services:["Sprout Gov"],sss:"Every 10th",phic:"Every 15th",bir:"Every 20th",hdmf:"Every 10th",remarks:"—"}
+  ],
+  idSeq:5,
+  editingId:null,
+  activeTab:"sgc"
+};
+
+var toastTimer=null;
+function loadData(){
+  var g=dbGet(SK);if(g)S.gcash={entries:g.entries||[],idSeq:g.idSeq||0,scheduled:g.scheduled||false,dayDates:g.dayDates||{}};
+  var c=dbGet(CK);if(c)S.check={requests:c.requests||[],idSeq:c.idSeq||0};
+  var dm=localStorage.getItem("cbc_dark");if(dm==="1")S.darkMode=true;
+  var sg=dbGet("sg_v1");if(sg){SG.clients=sg.clients||SG.clients;SG.churned=sg.churned||SG.churned;SG.idSeq=sg.idSeq||SG.idSeq;}
+}
+function saveG(){dbSet(SK,S.gcash);showToast();}
+function saveC(){dbSet(CK,S.check);showToast();}
+function saveSG(){dbSet("sg_v1",{clients:SG.clients,churned:SG.churned,idSeq:SG.idSeq});showToast();}
+function showToast(){S.toast=true;render();if(toastTimer)clearTimeout(toastTimer);toastTimer=setTimeout(function(){S.toast=false;render();},1500);}
+
+function el(tag,props,children){
+  var e=document.createElement(tag);
+  if(props)for(var k in props){if(k==="cls")e.className=props[k];else if(k==="css")Object.assign(e.style,props[k]);else if(k.substr(0,2)==="on")e.addEventListener(k.substr(2),props[k]);else e.setAttribute(k,props[k]);}
+  if(children)children.forEach(function(c){if(c!=null&&c!==false)e.appendChild(typeof c==="string"?document.createTextNode(c):c);});
+  return e;
+}
+function div(p,c){return el("div",p,c);}
+function span(p,c){return el("span",p,c);}
+function btn(p,c){return el("button",p,c);}
+function inp(p){return el("input",p,[]);}
+function bdg(t,cls){return span({cls:"badge "+cls},[t]);}
+function statusBdg(s){var m={"Pending":"badge-amber","Waiting for Appointment Number":"badge-purple","For Check Pick Up":"badge-blue","Successful Check Pick Up":"badge-teal","Paid":"badge-green"};return bdg(s,m[s]||"badge-amber");}
+function gcashBdg(s){var m={"Paid":"badge-green","Cancelled":"badge-grey","Pending":"badge-amber"};return bdg(s,m[s]||"badge-amber");}
+function agBdg(a){var m={"PhilHealth":"badge-green","HDMF Contribution":"badge-purple","HDMF Loans":"badge-purple","HDMF MP2":"badge-amber"};return bdg(a,m[a]||"badge-grey");}
+function roleBdg(r){var m={member:"badge-member",scheduler:"badge-scheduler",approver:"badge-approver"};return bdg(r.charAt(0).toUpperCase()+r.slice(1),m[r]||"badge-grey");}
+function sgSvcBdg(svcs){var map={"Sprout Gov":"badge-green","Ben Ad Services":"badge-purple","Statutory Disbursement":"badge-blue"};return svcs.map(function(s){return'<span class="badge '+(map[s]||"badge-amber")+'" style="margin-right:2px;">'+s+'</span>';}).join("");}
+function sgPocBdg(p){return'<span class="badge '+(p==="Churned/ Will Not Continue"?"badge-red-soft":"badge-blue")+'">'+p+'</span>';}
+function mkSelect(opts,val,onCh,w,ph){var s=document.createElement("select");s.className="inp";if(w)s.style.width=w+"px";if(ph){var o=document.createElement("option");o.value="";o.disabled=true;o.textContent=ph;if(!val)o.selected=true;s.appendChild(o);}opts.forEach(function(op){var o=document.createElement("option");o.value=op;o.textContent=op;if(op===val)o.selected=true;s.appendChild(o);});s.addEventListener("change",function(e){onCh(e.target.value);});return s;}
+function field(lbl,el2,lc){var w=div({cls:"field"},[]);w.appendChild(el("label",{css:{fontSize:"11px",color:lc||"#3D3D3A"}},[lbl]));w.appendChild(el2);return w;}
+function buildPagination(total,page,onPage){
+  var pages=Math.max(1,Math.ceil(total/PAGE_SIZE));if(pages<=1)return null;
+  var pg=div({cls:"pagination"},[]);
+  var prev=btn({cls:"pg-btn",onclick:function(){if(page>1)onPage(page-1);}},["← Prev"]);if(page===1)prev.disabled=true;pg.appendChild(prev);
+  for(var i=1;i<=pages;i++){(function(p){pg.appendChild(btn({cls:"pg-btn"+(page===p?" active":""),onclick:function(){onPage(p);}},[""+p]));})(i);}
+  var nxt=btn({cls:"pg-btn",onclick:function(){if(page<pages)onPage(page+1);}},["Next →"]);if(page===pages)nxt.disabled=true;pg.appendChild(nxt);
+  pg.appendChild(span({cls:"pg-info"},["Page "+page+" of "+pages+" ("+total+" entries)"]));
+  return pg;
+}
+function mkLogo(sz){
+  var s=document.createElementNS("http://www.w3.org/2000/svg","svg");s.setAttribute("width",sz);s.setAttribute("height",sz);s.setAttribute("viewBox","0 0 100 100");s.setAttribute("fill","none");
+  function ap(t,a){var e=document.createElementNS("http://www.w3.org/2000/svg",t);for(var k in a)e.setAttribute(k,a[k]);s.appendChild(e);}
+  ap("rect",{width:"100",height:"100",rx:"22",fill:"#1A3A1A"});
+  ap("path",{d:"M50 75 Q50 55 50 45",stroke:"#32CE13","stroke-width":"4","stroke-linecap":"round"});
+  ap("path",{d:"M50 58 Q35 52 30 38 Q42 36 50 45 Q50 52 50 58Z",fill:"#32CE13"});
+  ap("path",{d:"M50 45 Q62 30 72 32 Q70 46 58 50 Q54 51 50 50Z",fill:"#32CE13"});
+  return s;
+}
+function extractFromPDF(base64Data,agency,onSuccess,onDone){
+  var apiKey=getApiKey();
+  if(!apiKey){onDone("No API key. Click ⚙ API Key in the top bar.");return;}
+  var isHDMF=agency&&agency.indexOf("HDMF")===0,isPhilHealth=agency==="PhilHealth";
+  var prompt=isHDMF?"This is an HDMF/Pag-IBIG Payment Instruction Form. Return ONLY two lines:\nAMOUNT:[total amount, digits and decimal only]\nPIN:[payment instruction number, no spaces]\nWrite NOT_FOUND if missing.":isPhilHealth?"This is a PhilHealth SPA. Return ONLY two lines:\nAMOUNT:[TOTAL AMOUNT DUE, digits and decimal only]\nPEN:[PEN number, digits only]\nWrite NOT_FOUND if missing.":"Return ONLY:\nAMOUNT:[total amount due, digits and decimal only]\nWrite NOT_FOUND if missing.";
+  fetch("https://api.anthropic.com/v1/messages",{method:"POST",headers:{"Content-Type":"application/json","x-api-key":apiKey,"anthropic-version":"2023-06-01","anthropic-dangerous-direct-browser-access":"true"},body:JSON.stringify({model:"claude-haiku-4-5-20251001",max_tokens:64,messages:[{role:"user",content:[{type:"document",source:{type:"base64",media_type:"application/pdf",data:base64Data}},{type:"text",text:prompt}]}]})})
+  .then(function(r){return r.json();}).then(function(data){
+    if(data.error){onDone("API error: "+data.error.message);return;}
+    var text="";if(data.content&&Array.isArray(data.content))data.content.forEach(function(b){if(b.type==="text")text+=b.text;});
+    text=text.trim();
+    var amtM=text.match(/AMOUNT:([\d]+\.?[\d]*)/),pinM=text.match(/PIN:([A-Za-z0-9]{4,24})/),penM=text.match(/PEN:(\d{6,15})/);
+    var num=amtM&&amtM[1]!=="NOT_FOUND"?parseFloat(amtM[1]):NaN;
+    var pin=pinM&&pinM[1]!=="NOT_FOUND"?pinM[1]:"",pen=penM&&penM[1]!=="NOT_FOUND"?penM[1]:"";
+    if(!isNaN(num)&&num>0){onSuccess(num,pin,pen);onDone("");}else onDone("Could not find amount in PDF.");
+  }).catch(function(err){onDone("Error: "+err.message);});
+}
+function openConfirmModal(message,detail,onConfirm){
+  var overlay=div({cls:"modal-overlay"},[]);
+  var box=div({cls:"confirm-modal-box"},[]);
+  box.appendChild(div({cls:"confirm-modal-icon"},[el("svg",{width:"15",height:"15",viewBox:"0 0 16 16",fill:"none"},[el("path",{d:"M6 2h4M2 4h12M5 4v8a1 1 0 001 1h4a1 1 0 001-1V4",stroke:"#B91C1C","stroke-width":"1.4","stroke-linecap":"round","stroke-linejoin":"round"},[])])]));
+  box.appendChild(div({css:{fontSize:"12px",fontWeight:"500",color:var_th(),marginBottom:"4px"}},[message]));
+  box.appendChild(div({css:{fontSize:"11px",color:var_tm(),marginBottom:"7px"}},[detail]));
+  box.appendChild(div({cls:"confirm-modal-warning"},["⚠ This action cannot be undone."]));
+  box.appendChild(div({css:{display:"flex",gap:"7px"}},[
+    btn({cls:"btn-outline",css:{flex:"1"},onclick:function(){document.body.removeChild(overlay);}},["Cancel"]),
+    btn({css:{flex:"1",height:"32px",border:"none",borderRadius:"999px",background:"#B91C1C",color:"#fff",fontSize:"11px",fontWeight:"500",cursor:"pointer"},onclick:function(){document.body.removeChild(overlay);onConfirm();}},["Remove"])
+  ]));
+  overlay.appendChild(box);overlay.addEventListener("click",function(e){if(e.target===overlay)document.body.removeChild(overlay);});document.body.appendChild(overlay);
+}
+function var_th(){return S.darkMode?"#b2f0b2":"#033222";}
+function var_tm(){return S.darkMode?"#8aab8a":"#6B6B67";}
+function buildStatCards(items){
+  var wrap=div({cls:"stat-gradient-wrap"},[]);
+  var grid=div({css:{display:"grid",gridTemplateColumns:"repeat(auto-fit,minmax(110px,1fr))",gap:"8px"}},[]);
+  items.forEach(function(m){
+    var card=div({cls:"stat-glass-card"},[]);
+    card.appendChild(div({cls:"stat-glass-label",css:{color:m.labelColor||"rgba(255,255,255,0.6)"}},[m.l]));
+    card.appendChild(div({cls:"stat-glass-value"+(m.accent?" sm accent":m.big?"":" sm")},[String(m.v)]));
+    grid.appendChild(card);
+  });
+  wrap.appendChild(grid);return wrap;
+}
+function buildLogin(){
+  var role="member",pin="";
+  var errEl=div({css:{fontSize:"11px",color:"#B91C1C",marginTop:"4px"}},[]);
+  var pinInp=inp({type:"password",cls:"inp",css:{width:"100%"},placeholder:"Enter your PIN",maxlength:"6"});
+  pinInp.addEventListener("input",function(e){pin=e.target.value;});
+  pinInp.addEventListener("keydown",function(e){if(e.key==="Enter")tryLogin();});
+  function tryLogin(){var u=USERS.find(function(u){return u.role===role&&u.pin===pin;});if(u){S.user=u;render();}else{errEl.textContent="Incorrect PIN. Please try again.";}}
+  var roleSel=mkSelect(["Member","Scheduler","Approver"],"Member",function(v){role=v.toLowerCase();},null);roleSel.style.width="100%";
+  return div({css:{minHeight:"100vh",background:"var(--bg)",display:"flex",alignItems:"center",justifyContent:"center",padding:"2rem",flexDirection:"column",gap:"14px"}},[
+    div({css:{position:"fixed",top:"14px",right:"18px"}},[btn({cls:"btn-outline",css:{fontSize:"13px",padding:"0 10px"},onclick:function(){S.darkMode=!S.darkMode;localStorage.setItem("cbc_dark",S.darkMode?"1":"0");render();}},[S.darkMode?"☀️":"🌙"])]),
+    div({cls:"card-body",css:{width:"100%",maxWidth:"360px"}},[
+      div({css:{display:"flex",flexDirection:"column",alignItems:"center",marginBottom:"1.25rem",gap:"10px"}},[mkLogo(42),div({css:{textAlign:"center"}},[div({css:{fontSize:"14px",fontWeight:"600",color:"#033222"}},["CompBen Connect"]),div({css:{fontSize:"11px",color:"#6B6B67",marginTop:"2px"}},["Powered by Sprout Solutions"])])]),
+      div({css:{marginBottom:"11px"}},[el("label",{css:{fontSize:"11px",color:"#3D3D3A",display:"block",marginBottom:"4px"}},["Role"]),roleSel]),
+      div({css:{marginBottom:"14px"}},[el("label",{css:{fontSize:"11px",color:"#3D3D3A",display:"block",marginBottom:"4px"}},["PIN"]),pinInp,errEl]),
+      btn({cls:"btn-green",css:{width:"100%",height:"40px",fontSize:"14px"},onclick:tryLogin},["Sign in"]),
+      div({css:{marginTop:"14px",padding:"9px",background:"#E9FAE5",borderRadius:"10px",fontSize:"11px",color:"#239A0D"}},[el("strong",{css:{display:"block",marginBottom:"3px",color:"#033222"}},["Demo PINs"]),"Member: 1111  |  Scheduler: 2222  |  Approver: 9999"])
+    ])
+  ]);
+}
+function buildSidebar(){
+  var o=S.sidebarOpen;
+  var sb=div({cls:"sidebar"+(o?"":" collapsed")},[]);
+  sb.appendChild(div({cls:"sidebar-logo"},[mkLogo(30),div({},[div({cls:"sidebar-logo-title"},["CompBen Connect"]),div({cls:"sidebar-logo-sub"},["Sprout Solutions"])])]));
+  var nav=div({cls:"nav"},[]);
+  nav.appendChild(btn({cls:"nav-item"+(S.section==="sprout-gov"?" active":""),onclick:function(){S.section="sprout-gov";render();}},[span({cls:"nav-icon"},["🏛️"]),span({cls:"nav-label"},["Sprout Gov"])]));
+  var isBenActive=S.section==="maternity"||S.section==="sickness"||S.section==="processed";
+  var benWrap=div({cls:"nav-group-wrap"},[]);
+  var benBtn=btn({cls:"nav-group-btn"+(isBenActive?" active":""),onclick:function(){S.benAdOpen=!S.benAdOpen;render();}},[span({cls:"nav-icon"},["🛡️"]),span({cls:"nav-label"},["Ben Ad"]),span({cls:"nav-label nav-group-arrow"+(S.benAdOpen?" open":"")},["▾"])]);
+  var benChildren=div({cls:"nav-group-children"+(S.benAdOpen?" open":"")},[]);
+  [{key:"maternity",lbl:"Maternity Benefit",icon:"🤱"},{key:"sickness",lbl:"Sickness Benefit",icon:"🏥"},{key:"processed",lbl:"Processed Requests",icon:"📋"}].forEach(function(c){
+    benChildren.appendChild(btn({cls:"nav-item nav-child"+(S.section===c.key?" active":""),onclick:function(k){return function(e){e.stopPropagation();S.section=k;render();};}(c.key)},[span({cls:"nav-icon"},[c.icon]),span({cls:"nav-label"},[c.lbl])]));
+  });
+  benWrap.appendChild(benBtn);benWrap.appendChild(benChildren);nav.appendChild(benWrap);
+  var isGrpActive=S.section==="gcash"||S.section==="check";
+  var gWrap=div({cls:"nav-group-wrap"},[]);
+  var gBtn=btn({cls:"nav-group-btn"+(isGrpActive?" active":""),onclick:function(){S.sidebarGroupOpen=!S.sidebarGroupOpen;render();}},
+    [span({cls:"nav-icon"},["📋"]),span({cls:"nav-label"},["Statutory Disbursement"]),span({cls:"nav-label nav-group-arrow"+(S.sidebarGroupOpen?" open":"")},["▾"])]);
+  var gChildren=div({cls:"nav-group-children"+(S.sidebarGroupOpen?" open":"")},[]);
+  [{key:"gcash",lbl:"GCash Remittance",icon:"💸"},{key:"check",lbl:"Check Request Monitoring",icon:"🧾"}].forEach(function(c){
+    gChildren.appendChild(btn({cls:"nav-item nav-child"+(S.section===c.key?" active":""),onclick:function(k){return function(e){e.stopPropagation();S.section=k;render();};}(c.key)},[span({cls:"nav-icon"},[c.icon]),span({cls:"nav-label"},[c.lbl])]));
+  });
+  gWrap.appendChild(gBtn);gWrap.appendChild(gChildren);nav.appendChild(gWrap);
+  sb.appendChild(nav);
+  sb.appendChild(div({cls:"sidebar-footer"},[btn({cls:"collapse-btn",onclick:function(){S.sidebarOpen=!S.sidebarOpen;render();}},[o?"◀":"▶"])]));
+  return sb;
+}
+function buildTopbar(){
+  var titles={gcash:"💸 GCash Remittance",check:"🧾 Check Request Monitoring","sprout-gov":"🏛️ Sprout Gov",maternity:"🤱 Maternity Benefit Computation",sickness:"🏥 Sickness Benefit Computation",processed:"📋 Processed Requests"};
+  var hasKey=!!getApiKey(),isA=S.user.role==="approver";
+  var actions=[
+    btn({cls:"btn-outline",css:{fontSize:"11px",borderColor:hasKey?"#32CE13":"#FCA5A5",color:hasKey?"#239A0D":"#B91C1C"},onclick:function(){openApiKeyModal();}},["⚙ "+(hasKey?"API Key ✓":"Set API Key")]),
+    btn({cls:"btn-outline",css:{fontSize:"13px",padding:"0 10px",borderColor:"var(--border)"},onclick:function(){S.darkMode=!S.darkMode;localStorage.setItem("cbc_dark",S.darkMode?"1":"0");render();}},[S.darkMode?"☀️":"🌙"]),
+    btn({cls:"btn-outline",css:{borderColor:"var(--border)",color:"var(--text-muted)"},onclick:function(){S.user=null;render();}},["\u{1F6AA} Sign out"]),
+    roleBdg(S.user.role)
+  ];
+  if(!isA&&(S.section==="gcash"||S.section==="check"))actions.unshift(btn({cls:"btn-green",css:{fontSize:"11px"},onclick:function(){S.drawerOpen=true;render();}},["+ "+(S.section==="gcash"?"Add Entry":"Add Request")]));
+  if(S.section==="sprout-gov")actions.unshift(btn({cls:"btn-green",css:{fontSize:"11px"},onclick:function(){openSGNewClientModal();}},["+ New Client"]));
+  return div({cls:"topbar"},[div({cls:"topbar-title"},[titles[S.section]||""]),div({cls:"topbar-actions"},actions)]);
+}
+function openApiKeyModal(){
+  var overlay=div({cls:"modal-overlay"},[]);var box=div({cls:"modal-box",css:{maxWidth:"420px"}},[]);
+  var saved=getApiKey();
+  box.appendChild(div({css:{fontSize:"14px",fontWeight:"600",color:var_th(),marginBottom:"5px"}},["⚙ Anthropic API Key"]));
+  box.appendChild(div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},["Needed for PDF auto-read. Saved permanently in this browser."]));
+  box.appendChild(el("a",{href:"https://console.anthropic.com",target:"_blank",css:{fontSize:"11px",color:"#1679FA",display:"block",marginBottom:"13px"}},["→ Get your key at console.anthropic.com"]));
+  var ki=inp({type:"password",cls:"inp",css:{width:"100%",borderRadius:"8px"},placeholder:"sk-ant-...",value:saved});
+  box.appendChild(ki);
+  box.appendChild(div({css:{fontSize:"10px",marginTop:"5px",color:saved?"#239A0D":"#A1470B"}},[saved?"✓ API key saved — PDF auto-read is active.":"⚠ No key saved."]));
+  box.appendChild(div({css:{display:"flex",gap:"7px",justifyContent:"flex-end",marginTop:"14px"}},[
+    btn({cls:"btn-red",css:{marginRight:"auto"},onclick:function(){removeApiKey();document.body.removeChild(overlay);render();}},["🗑 Remove"]),
+    btn({cls:"btn-outline",onclick:function(){document.body.removeChild(overlay);}},["Cancel"]),
+    btn({cls:"btn-green",onclick:function(){var k=ki.value.trim();if(k)setApiKey(k);document.body.removeChild(overlay);render();showToast();}},["💾 Save"])
+  ]));
+  overlay.appendChild(box);overlay.addEventListener("click",function(e){if(e.target===overlay)document.body.removeChild(overlay);});document.body.appendChild(overlay);
+}
+function openExportModal(){
+  var entries=S.gcash.entries,months=[],seen={};
+  entries.forEach(function(e){if(e.appMonth&&!seen[e.appMonth]){seen[e.appMonth]=true;months.push(e.appMonth);}});
+  var selMonth="",selClient="";
+  var overlay=div({cls:"modal-overlay"},[]);var box=div({cls:"modal-box",css:{maxWidth:"440px"}},[]);
+  box.appendChild(div({css:{fontSize:"14px",fontWeight:"600",color:var_th(),marginBottom:"4px"}},["⬇ Export GCash Entries"]));
+  box.appendChild(div({css:{fontSize:"11px",color:var_tm(),marginBottom:"14px"}},["Filter by Applicable Month and/or Client before downloading."]));
+  var mSel=document.createElement("select");mSel.className="inp";mSel.style.width="100%";
+  [["","All Months"]].concat(months.map(function(m){return[m,m];})).forEach(function(p){var o=document.createElement("option");o.value=p[0];o.textContent=p[1];mSel.appendChild(o);});
+  mSel.addEventListener("change",function(){selMonth=mSel.value;updatePreview();});
+  var cSel=document.createElement("select");cSel.className="inp";cSel.style.width="100%";
+  [["","All Clients"]].concat(CLIENTS.map(function(c){return[c,c];})).forEach(function(p){var o=document.createElement("option");o.value=p[0];o.textContent=p[1];cSel.appendChild(o);});
+  cSel.addEventListener("change",function(){selClient=cSel.value;updatePreview();});
+  box.appendChild(field("Applicable Month",mSel));box.appendChild(div({css:{marginTop:"9px"}}));box.appendChild(field("Client",cSel));
+  var previewEl=div({css:{marginTop:"13px",background:"var(--export-preview)",borderRadius:"10px",padding:"9px 13px",fontSize:"11px"}},[]);
+  function getFiltered(){return entries.filter(function(e){return(selMonth?e.appMonth===selMonth:true)&&(selClient?e.client===selClient:true);});}
+  function getFname(){var p=["GCash"];if(selClient)p.push(selClient.replace(/\s+/g,"_"));if(selMonth)p.push(selMonth.replace(/\s+/g,"_"));if(!selClient&&!selMonth)p.push("All_"+todayISO());return p.join("_")+".csv";}
+  function updatePreview(){var f=getFiltered();while(previewEl.firstChild)previewEl.removeChild(previewEl.firstChild);previewEl.appendChild(div({css:{fontWeight:"500",color:var_th(),marginBottom:"3px"}},["Preview"]));previewEl.appendChild(div({css:{color:var_tm()}},[f.length+" entries match"]));previewEl.appendChild(div({css:{marginTop:"3px",fontFamily:"monospace",fontSize:"10px",color:"#239A0D"}},[getFname()]));}
+  box.appendChild(previewEl);
+  var dlBtn=btn({cls:"btn-green",css:{height:"34px",fontSize:"12px"},onclick:function(){var f=getFiltered();if(!f.length){alert("No entries match.");return;}downloadCSV(getFname(),GCASH_HDRS,f.map(function(e){return[e.client,e.agency,e.remType==="pastdue"?"Past Due":"Up to Date",e.appMonth||"",e.amount,e.mp2pin||"",e.deadline||"",e.status||"Pending"];}));document.body.removeChild(overlay);}},["⬇ Download"]);
+  box.appendChild(div({css:{display:"flex",gap:"7px",justifyContent:"flex-end",marginTop:"13px"}},[btn({cls:"btn-outline",onclick:function(){document.body.removeChild(overlay);}},["Cancel"]),dlBtn]));
+  updatePreview();overlay.appendChild(box);overlay.addEventListener("click",function(e){if(e.target===overlay)document.body.removeChild(overlay);});document.body.appendChild(overlay);
+}
+function buildDrawer(){
+  var sec=S.section;
+  var overlay=div({cls:"drawer-overlay"+(S.drawerOpen?" open":"")},[]);
+  overlay.addEventListener("click",function(){S.drawerOpen=false;render();});
+  var panel=div({cls:"drawer-panel"+(S.drawerOpen?" open":"")},[]);
+  var hdr=div({cls:"drawer-header"},[span({css:{fontSize:"12px",fontWeight:"600",color:var_th()}},[sec==="gcash"?"Add Remittance Entry":"Add Check Request"]),btn({css:{background:"none",border:"none",cursor:"pointer",fontSize:"17px",color:var_tm(),lineHeight:"1"},onclick:function(){S.drawerOpen=false;render();}},["✕"])]);
+  var body=div({cls:"drawer-body"},[]);
+  if(sec==="gcash"){
+    var f=S.gcashForm;
+    body.appendChild(field("Client Name",mkSelect(CLIENTS,f.client,function(v){S.gcashForm.client=v;},260,"Select here")));
+    body.appendChild(field("Agency",mkSelect(AGENCIES,f.agency,function(v){S.gcashForm.agency=v;S.gcashForm.mp2pin="";S.gcashForm.pen="";render();},260,"Select here")));
+    var isEx=f.extracting;
+    var amtI=inp({type:"number",cls:"inp"+(isEx?" shimmer-field":""),css:{width:"100%",borderColor:isEx?"#8435EB":(f.pdfFile&&f.amount&&!isEx)?"#32CE13":""},value:f.amount,placeholder:"0.00"});
+    amtI.addEventListener("input",function(e){S.gcashForm.amount=e.target.value;});
+    var amtW=div({cls:"field"},[el("label",{css:{fontSize:"11px",color:"#3D3D3A"}},["Amount (₱)"]),amtI]);
+    if(f.pdfFile&&f.amount&&!isEx)amtW.appendChild(span({cls:"extract-hint"},["✓ Auto-extracted from PDF"]));
+    body.appendChild(amtW);
+    body.appendChild(field("Remittance Type",mkSelect(["Up to Date","Past Due"],f.remType==="pastdue"?"Past Due":"Up to Date",function(v){S.gcashForm.remType=v==="Past Due"?"pastdue":"uptodate";S.gcashForm.appMonth=v==="Past Due"?"":prevMonth();render();},260)));
+    if(f.remType==="uptodate")body.appendChild(field("Applicable Month",div({cls:"pill-ro",css:{width:"100%",justifyContent:"center"}},[prevMonth()])));
+    else{var ms=mkSelect(MONTHS,f.pdMonth,function(v){S.gcashForm.pdMonth=v;S.gcashForm.appMonth=v+" "+S.gcashForm.pdYear;},140,"Month");var ys=mkSelect(["2024","2025","2026"],String(f.pdYear),function(v){S.gcashForm.pdYear=v;S.gcashForm.appMonth=S.gcashForm.pdMonth+" "+v;},100);body.appendChild(field("Applicable Month",div({css:{display:"flex",gap:"5px"}},[ms,ys])));}
+    var dlrow=div({css:{display:"flex",gap:"5px",flexWrap:"wrap"}},[]);
+    var dloptions=dlOpts(f.agency,f.client);
+    // Auto-set deadline if agency determines it uniquely (HDMF Contribution/Loans)
+    if(dloptions.length===1&&f.deadline!==dloptions[0].v){S.gcashForm.deadline=dloptions[0].v;}
+    dloptions.forEach(function(o){dlrow.appendChild(btn({cls:"btn-tab"+(f.deadline===o.v?" active":""),onclick:function(ov){return function(){S.gcashForm.deadline=f.deadline===ov?"":ov;render();};}(o.v)},[o.l]));});
+    body.appendChild(field("Deadline (required)",dlrow,"#B91C1C"));
+    if(f.agency&&f.agency.indexOf("HDMF")===0){var pi=inp({cls:"inp"+(isEx?" shimmer-field":""),css:{width:"100%",borderColor:isEx?"#8435EB":""},value:f.mp2pin||"",placeholder:"Enter PIN"});pi.addEventListener("input",function(e){S.gcashForm.mp2pin=e.target.value;});body.appendChild(field("HDMF Remittance PIN",pi,"#A1470B"));}
+    if(f.agency==="PhilHealth"&&f.pen)body.appendChild(field("PEN",div({cls:"pen-display"},[f.pen.slice(0,-1),span({cls:"pen-last"},[f.pen.slice(-1)])])));
+    var pid="pup"+Date.now();
+    var pInp=inp({type:"file",id:pid,accept:".pdf",css:{display:"none"}});
+    pInp.addEventListener("change",function(e){
+      var file=e.target.files[0];if(!file)return;
+      var r=new FileReader();r.onload=function(ev){
+        S.gcashForm.pdfFile=ev.target.result;S.gcashForm.pdfName=file.name;S.gcashForm.extracting=true;S.gcashForm.extractErr="";render();
+        extractFromPDF(ev.target.result.split(",")[1],S.gcashForm.agency,
+          function(num,pin,pen){S.gcashForm.amount=String(num);if(pin&&S.gcashForm.agency.indexOf("HDMF")===0)S.gcashForm.mp2pin=pin;if(pen&&S.gcashForm.agency==="PhilHealth"){S.gcashForm.pen=pen;var dl=deadlineFromPEN(pen);if(dl)S.gcashForm.deadline=dl;}},
+          function(err){S.gcashForm.extracting=false;S.gcashForm.extractErr=err||"";render();});
+      };r.readAsDataURL(file);
+    });
+    var pLbl=el("label",{for:pid,cls:"inp",css:{display:"flex",alignItems:"center",cursor:"pointer",background:"var(--bg)",fontSize:"11px"}},["📎 "+(f.pdfName?(f.pdfName.length>22?f.pdfName.slice(0,20)+"…":f.pdfName):"Attach PDF")]);
+    var pWrap=div({css:{display:"flex",alignItems:"center",gap:"5px"}},[pInp,pLbl]);
+    if(f.extracting)pWrap.appendChild(span({cls:"extracting-hint"},["⏳ Reading PDF..."]));
+    if(f.extractErr)pWrap.appendChild(span({css:{fontSize:"10px",color:"#B91C1C",fontStyle:"italic"}},["⚠ "+f.extractErr]));
+    if(f.pdfFile&&!f.extracting)pWrap.appendChild(btn({css:{background:"none",border:"none",cursor:"pointer",fontSize:"15px",color:"#B91C1C",lineHeight:"1"},onclick:function(){S.gcashForm.pdfFile=null;S.gcashForm.pdfName="";S.gcashForm.amount="";S.gcashForm.pen="";S.gcashForm.extractErr="";render();}},["✕"]));
+    body.appendChild(field("PDF Report",pWrap));
+    if(S.gcashFormErr)body.appendChild(div({css:{fontSize:"11px",color:"#B91C1C"}},[S.gcashFormErr]));
+  }else{
+    var cf=S.checkForm;
+    body.appendChild(field("Client Name",mkSelect(CLIENTS,cf.clientName,function(v){S.checkForm.clientName=v;},260,"Select here")));
+    body.appendChild(field("Remittance Type",mkSelect(["Up to Date","Past Due"],cf.remType==="pastdue"?"Past Due":"Up to Date",function(v){S.checkForm.remType=v==="Past Due"?"pastdue":"uptodate";S.checkForm.appMonth=v==="Past Due"?"":prevMonth();render();},260)));
+    if(cf.remType==="uptodate")body.appendChild(field("Applicable Month",div({cls:"pill-ro",css:{width:"100%",justifyContent:"center"}},[prevMonth()])));
+    else{var ms2=mkSelect(MONTHS,cf.pdMonth,function(v){S.checkForm.pdMonth=v;S.checkForm.appMonth=v+" "+S.checkForm.pdYear;},140,"Month");var ys2=mkSelect(["2024","2025","2026"],String(cf.pdYear),function(v){S.checkForm.pdYear=v;S.checkForm.appMonth=S.checkForm.pdMonth+" "+v;},100);body.appendChild(field("Applicable Month",div({css:{display:"flex",gap:"5px"}},[ms2,ys2])));}
+    var grSel=mkSelect(GOV_REMS,cf.govRem,function(v){S.checkForm.govRem=v;render();},260,"Select here");body.appendChild(field("Government Remittance",grSel));
+    if(cf.govRem&&getPayee(cf.govRem)!=="\u2014")body.appendChild(field("Check Payee",div({cls:"pill-ro",css:{width:"100%",justifyContent:"center"}},[getPayee(cf.govRem)])));
+    body.appendChild(field("Type of Check",mkSelect(CHECK_TYPES,cf.typeOfCheck,function(v){S.checkForm.typeOfCheck=v;},260,"Select here")));
+    var amtC=inp({type:"number",cls:"inp",css:{width:"100%"},value:cf.amount,placeholder:"0.00"});amtC.addEventListener("input",function(e){S.checkForm.amount=e.target.value;});body.appendChild(field("Amount (₱)",amtC));
+    var drI=inp({type:"date",cls:"inp",css:{width:"100%"},value:cf.dateOfReq});drI.addEventListener("change",function(e){S.checkForm.dateOfReq=e.target.value;});body.appendChild(field("Date of Request",drI));
+    var rbI=inp({cls:"inp",css:{width:"100%"},value:cf.reqBy,placeholder:"Name"});rbI.addEventListener("input",function(e){S.checkForm.reqBy=e.target.value;});body.appendChild(field("Requested By",rbI));
+    if(S.checkFormErr)body.appendChild(div({css:{fontSize:"11px",color:"#B91C1C"}},[S.checkFormErr]));
+  }
+  var footer=div({cls:"drawer-footer"},[btn({cls:"btn-green",css:{width:"100%"},onclick:function(){if(sec==="gcash")addGcashEntry();else addCheckEntry();}},["+ "+(sec==="gcash"?"Add Entry":"Add Request")])]);
+  panel.appendChild(hdr);panel.appendChild(body);panel.appendChild(footer);
+  return div({},[overlay,panel]);
+}
+function mkColFilterTh(label,colKey,opts,currentVal,onSelect){
+  var th=el("th",{},[]);var isActive=!!currentVal;
+  var inner=div({css:{display:"flex",alignItems:"center",gap:"3px",whiteSpace:"nowrap"}},[span({},[label])]);
+  if(S.gcashFilter.filterMode){
+    var fiBtn=btn({cls:"fi-icon-btn"+(isActive?" fi-active":""),onclick:function(e){e.stopPropagation();S.openColFilter=S.openColFilter===colKey?null:colKey;render();}},["▾"]);
+    inner.appendChild(fiBtn);
+    if(S.openColFilter===colKey){
+      var drop=div({cls:"fi-dropdown fi-open"},[]);drop.addEventListener("click",function(e){e.stopPropagation();});
+      var sel=document.createElement("select");sel.style.cssText="width:100%;height:26px;padding:0 7px;border:1.5px solid var(--inp-border);border-radius:999px;font-size:10px;outline:none;background:var(--inp-bg);color:var(--text);";
+      var aOpt=document.createElement("option");aOpt.value="";aOpt.textContent="All";sel.appendChild(aOpt);
+      opts.forEach(function(o){var opt=document.createElement("option");opt.value=o;opt.textContent=o;if(o===currentVal)opt.selected=true;sel.appendChild(opt);});
+      sel.addEventListener("change",function(e){e.stopPropagation();onSelect(e.target.value);S.openColFilter=null;S.gcashFilter.page=1;render();});
+      drop.appendChild(sel);inner.appendChild(drop);
+    }
+  }
+  th.appendChild(inner);return th;
+}
+function buildGcash(){
+  var isA=S.user.role==="approver",isS=S.user.role==="scheduler",isM=S.user.role==="member";
+  var wrap=div({},[]);
+  document.onclick=function(e){if(S.openColFilter&&!e.target.closest(".fi-dropdown")&&!e.target.closest(".fi-icon-btn")){S.openColFilter=null;render();}};
+  if(!getApiKey()&&(isM||isS))wrap.appendChild(div({cls:"apikey-banner"},[span({},["⚠ PDF auto-read disabled. Set your Anthropic API key."]),btn({cls:"btn-tab",css:{fontSize:"10px"},onclick:function(){openApiKeyModal();}},["⚙ Set Key"])]));
+  if(isA)wrap.appendChild(div({cls:"section-banner",css:{background:"var(--badge-purple-bg)",border:"0.5px solid var(--badge-purple-bg)"}},[div({},[div({css:{fontWeight:"500",color:"#8435EB",marginBottom:"1px",fontSize:"12px"}},["Approver View — Read Only"]),div({css:{fontSize:"11px",color:"#6B21C8"}},["View and export records."])]),div({css:{display:"flex",gap:"7px"}},[btn({cls:"btn-ubas",onclick:function(){openExportModal();}},["⬇ Export"]),btn({cls:"btn-ubas",onclick:function(){openUploadModal("gcash");}},["📤 Bulk Upload"]),btn({cls:"btn-ubas",onclick:function(){printGcash();}},["🖨 Print"])])]));
+  if(isS)wrap.appendChild(div({cls:"section-banner",css:{background:"var(--badge-blue-bg)",border:"0.5px solid var(--badge-blue-bg)"}},[div({},[div({css:{fontWeight:"500",color:"var(--badge-blue-c)",fontSize:"12px"}},["Scheduler View"]),div({css:{fontSize:"11px",color:"var(--badge-blue-c)"}},["Full access — auto-schedule, bulk upload."])]),div({css:{display:"flex",gap:"7px",flexWrap:"wrap"}},[btn({cls:"btn-blue",onclick:function(){openExportModal();}},["⬇ Export"]),btn({cls:"btn-blue",onclick:function(){openUploadModal("gcash");}},["📤 Bulk Upload"]),btn({cls:"btn-green",css:{fontSize:"11px"},onclick:function(){autoSchedule();}},["↻ Auto-Schedule"])])]));
+  var entries=S.gcash.entries;
+  if(entries.length>0){
+    var uClients=[],ucs={};entries.forEach(function(e){if(!ucs[e.client]){ucs[e.client]=true;uClients.push(e.client);}});
+    var uAgencies=[],uas={};entries.forEach(function(e){if(!uas[e.agency]){uas[e.agency]=true;uAgencies.push(e.agency);}});
+    var uMonths=[],ums={};entries.forEach(function(e){if(e.appMonth&&!ums[e.appMonth]){ums[e.appMonth]=true;uMonths.push(e.appMonth);}});
+    var uDeadlines=[],uds={};entries.forEach(function(e){if(e.deadline&&!uds[e.deadline]){uds[e.deadline]=true;uDeadlines.push(fmtD(e.deadline));}});
+    var flt=S.gcashFilter;
+    var filtered=entries.filter(function(e){
+      if(!flt.showCancelled&&e.status==="Cancelled")return false;
+      if(flt.client&&e.client!==flt.client)return false;
+      if(flt.agency&&e.agency!==flt.agency)return false;
+      if(flt.remType){var rt=e.remType==="pastdue"?"Past Due":"Up to Date";if(rt!==flt.remType)return false;}
+      if(flt.appMonth&&e.appMonth!==flt.appMonth)return false;
+      if(flt.deadline&&fmtD(e.deadline)!==flt.deadline)return false;
+      if(flt.status&&e.status!==flt.status)return false;
+      return true;
+    });
+    var gPage=flt.page||1,gPages=Math.max(1,Math.ceil(filtered.length/PAGE_SIZE));if(gPage>gPages)gPage=S.gcashFilter.page=1;
+    var paged=filtered.slice((gPage-1)*PAGE_SIZE,gPage*PAGE_SIZE);
+    var tc=div({cls:"card-body"},[]);
+    var fRow=div({css:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"7px",flexWrap:"wrap",gap:"7px"}},[]);
+    var fL=div({css:{display:"flex",alignItems:"center",gap:"7px",flexWrap:"wrap"}},[]);
+    fL.appendChild(div({css:{fontSize:"12px",fontWeight:"500",color:var_th()}},["All Entries ("+filtered.length+"/"+entries.length+")"]));
+    var cc=entries.filter(function(e){return e.status==="Cancelled";}).length;
+    fL.appendChild(btn({cls:"btn-tab"+(flt.filterMode?" active":""),onclick:function(){S.gcashFilter.filterMode=!S.gcashFilter.filterMode;S.openColFilter=null;render();}},["⚙ Filter"+(flt.filterMode?" (on)":"")]));
+    fL.appendChild(btn({cls:"btn-tab"+(flt.showCancelled?" active":""),onclick:function(){S.gcashFilter.showCancelled=!S.gcashFilter.showCancelled;S.gcashFilter.page=1;render();}},[(flt.showCancelled?"Hide Cancelled":"Cancelled ("+cc+")")]));
+    fRow.appendChild(fL);
+    if(isM||isS){var fR=div({css:{display:"flex",gap:"7px"}},[]);fR.appendChild(btn({cls:"btn-blue",css:{fontSize:"11px"},onclick:function(){openExportModal();}},["⬇ Export Excel"]));if(isS)fR.appendChild(btn({cls:"btn-green",css:{fontSize:"11px"},onclick:function(){autoSchedule();}},["Auto-Schedule ↓"]));fR.appendChild(btn({cls:"btn-red",onclick:function(){openConfirmModal("Clear all GCash entries?","All "+entries.length+" entries will be permanently deleted.",function(){S.gcash={entries:[],idSeq:0,scheduled:false,dayDates:{}};saveG();render();});}},["Clear All"]));fRow.appendChild(fR);}
+    tc.appendChild(fRow);
+    var aTags=[{k:"client",l:"Client"},{k:"agency",l:"Agency"},{k:"remType",l:"Type"},{k:"appMonth",l:"Month"},{k:"deadline",l:"Deadline"},{k:"status",l:"Status"}].filter(function(td){return flt[td.k];});
+    if(aTags.length>0){
+      var tagRow=div({css:{display:"flex",alignItems:"center",gap:"5px",flexWrap:"wrap",marginBottom:"7px"}},[span({css:{fontSize:"10px",color:var_tm()}},["Filters:"])]);
+      aTags.forEach(function(td){tagRow.appendChild(div({cls:"filter-tag"},[span({},[td.l+": "+flt[td.k]]),span({cls:"filter-tag-x",onclick:function(k){return function(){S.gcashFilter[k]="";S.gcashFilter.page=1;render();};}(td.k)},["×"])]));});
+      tagRow.appendChild(btn({css:{fontSize:"10px",color:"#B91C1C",background:"none",border:"none",cursor:"pointer"},onclick:function(){S.gcashFilter=Object.assign(S.gcashFilter,{client:"",agency:"",remType:"",appMonth:"",deadline:"",status:""});S.gcashFilter.page=1;render();}},["Clear all"]));
+      tc.appendChild(tagRow);
+    }
+    var tWrap=div({cls:"overflow-x"},[]);var tbl=el("table",{cls:"tbl"},[]);
+    var headRow=el("tr",{},[]);
+    var colDefs=[
+      {h:"Client",filterable:true,fkey:"client",opts:uClients},
+      {h:"Agency",filterable:true,fkey:"agency",opts:uAgencies},
+      {h:"Type",filterable:true,fkey:"remType",opts:["Up to Date","Past Due"]},
+      {h:"App. Month",filterable:true,fkey:"appMonth",opts:uMonths},
+      {h:"Amount",filterable:false},{h:"Txn Fee",filterable:false},{h:"HDMF PIN",filterable:false},{h:"PDF",filterable:false},{h:"Payment Date",filterable:false},{h:"Payment Status",filterable:false},
+      {h:"Deadline",filterable:true,fkey:"deadline",opts:uDeadlines},
+      {h:"Status",filterable:true,fkey:"status",opts:GCASH_STATUSES}
+    ];
+    if(isM||isS)colDefs.push({h:"",filterable:false});
+    colDefs.forEach(function(col){
+      if(col.filterable&&flt.filterMode)headRow.appendChild(mkColFilterTh(col.h,col.fkey,col.opts,flt[col.fkey]||"",function(fk){return function(v){S.gcashFilter[fk]=v;};}(col.fkey)));
+      else headRow.appendChild(el("th",{},[col.h]));
+    });
+    tbl.appendChild(el("thead",{},[headRow]));
+    var tb=el("tbody",{},[]);var lastMonth="";
+    paged.forEach(function(e,idx){
+      if(e.appMonth&&e.appMonth!==lastMonth){
+        lastMonth=e.appMonth;
+        var isCollapsed=!!S.gcashCollapsed[e.appMonth];
+        var sr=el("tr",{cls:"month-sep"},[]);
+        var arrowSpan=span({css:{display:"inline-block",marginRight:"6px",fontStyle:"normal",transition:"transform .15s",fontSize:"11px",transform:isCollapsed?"rotate(-90deg)":"rotate(0deg)"}},["▼"]);
+        var std=el("td",{colspan:String(colDefs.length)},[]);
+        std.appendChild(arrowSpan);std.appendChild(document.createTextNode("📅 "+e.appMonth));
+        std.addEventListener("click",function(mo){return function(){S.gcashCollapsed[mo]=!S.gcashCollapsed[mo];render();};}(e.appMonth));
+        sr.appendChild(std);tb.appendChild(sr);
+      }
+      if(S.gcashCollapsed[e.appMonth])return;
+      var tr=el("tr",{cls:(idx>0?"row-sep ":"")+(idx%2===1?"zebra-even":""),css:{opacity:e.status==="Cancelled"?"0.5":"1"}},[]);
+      tr.appendChild(el("td",{},[e.client]));tr.appendChild(el("td",{},[agBdg(e.agency)]));
+      tr.appendChild(el("td",{},[e.remType==="pastdue"?bdg("Past Due","badge badge-red-soft"):bdg("Up to Date","badge-green")]));
+      tr.appendChild(el("td",{css:{color:var_tm()}},[e.appMonth||"—"]));tr.appendChild(el("td",{css:{fontWeight:"500"}},[fmt(e.amount)]));
+      tr.appendChild(el("td",{css:{fontWeight:"500",color:"#A1470B"}},[fmt(TXN_FEE[e.agency]||0)]));
+      tr.appendChild(el("td",{},[e.agency&&e.agency.indexOf("HDMF")===0?(e.mp2pin||"—"):"N/A"]));
+      var ptd=el("td",{},[]);if(e.pdfData)ptd.appendChild(btn({cls:"btn-outline",css:{fontSize:"10px"},onclick:function(d,n){return function(){openFileModal(d,n);};}(e.pdfData,e.pdfName)},["👁"]));else ptd.appendChild(span({css:{color:var_tm(),fontSize:"10px"}},["—"]));tr.appendChild(ptd);
+      var pdtd=el("td",{},[]);if(e.status==="Paid"){if(isM){var di=inp({type:"date",cls:"inp",css:{height:"28px",fontSize:"11px",padding:"0 9px",width:"138px"},value:e.paymentDate||""});di.addEventListener("change",function(eid){return function(ev){var en=S.gcash.entries.find(function(x){return x.id===eid;});if(en)en.paymentDate=ev.target.value;saveG();render();};}(e.id));pdtd.appendChild(di);}else pdtd.appendChild(span({css:{fontSize:"11px",color:var_tm()}},[fmtD(e.paymentDate)]));}else pdtd.appendChild(span({css:{fontSize:"10px",color:var_tm()}},["—"]));tr.appendChild(pdtd);
+      // Payment Status: Late Payment / On Time
+      var psTd=el("td",{css:{whiteSpace:"nowrap"}},[]);
+      if(e.status==="Paid"&&e.deadline){if(isLatePayment(e))psTd.appendChild(bdg("Late Payment","badge badge-red-soft"));else psTd.appendChild(bdg("On Time","badge-green"));}
+      else psTd.appendChild(span({css:{color:var_tm(),fontSize:"11px"}},["—"]));
+      tr.appendChild(psTd);
+      tr.appendChild(el("td",{css:{color:var_tm(),whiteSpace:"nowrap"}},[fmtD(e.deadline)]));
+      var std=el("td",{},[]);if(isA){std.appendChild(gcashBdg(e.status));}else if(e.status==="Paid"){std.appendChild(gcashBdg(e.status));}else{var ss=mkSelect(GCASH_STATUSES,e.status,function(eid){return function(v){var en=S.gcash.entries.find(function(x){return x.id===eid;});if(en){en.status=v;if(v==="Paid"&&!en.paymentDate)en.paymentDate=todayISO();}saveG();render();};}(e.id),110);std.appendChild(ss);}tr.appendChild(std);
+      if(isM||isS){
+        var actd=el("td",{},[]);var aw=div({css:{display:"flex",gap:"5px",alignItems:"center"}},[]);
+        if(isM&&e.status==="Paid"){if(e.proofFile)aw.appendChild(btn({cls:"btn-outline",css:{fontSize:"10px"},onclick:function(d,n){return function(){openFileModal(d,n);};}(e.proofFile,e.proofName)},["👁 Proof"]));else{var ppid="proof"+e.id;var pp=inp({type:"file",id:ppid,accept:".pdf,.png,.jpg,.jpeg,.xlsx",css:{display:"none"}});pp.addEventListener("change",function(eid){return function(ev){var f2=ev.target.files[0];if(!f2)return;var r2=new FileReader();r2.onload=function(rv){var en2=S.gcash.entries.find(function(x){return x.id===eid;});if(en2){en2.proofFile=rv.target.result;en2.proofName=f2.name;}saveG();render();};r2.readAsDataURL(f2);};}(e.id));aw.appendChild(pp);aw.appendChild(el("label",{for:ppid,cls:"inp",css:{height:"26px",padding:"0 9px",display:"inline-flex",alignItems:"center",cursor:"pointer",fontSize:"10px",background:"var(--badge-green-bg)",color:"var(--badge-green-c)",border:"1px solid var(--badge-green-bg)",whiteSpace:"nowrap"}},["📎 Proof"]));}}
+        if(isS)aw.appendChild(btn({cls:"btn-red",onclick:function(eid,ec,ea,eamt){return function(){openConfirmModal("Remove this entry?",ec+" — "+ea+" — "+fmt(eamt),function(){S.gcash.entries=S.gcash.entries.filter(function(x){return x.id!==eid;});saveG();render();});};}(e.id,e.client,e.agency,e.amount)},["Remove"]));
+        actd.appendChild(aw);tr.appendChild(actd);
+      }
+      tb.appendChild(tr);
+    });
+    tbl.appendChild(tb);tWrap.appendChild(tbl);tc.appendChild(tWrap);
+    var pgEl=buildPagination(filtered.length,gPage,function(p){S.gcashFilter.page=p;render();});if(pgEl)tc.appendChild(pgEl);
+    wrap.appendChild(tc);
+  }
+  if(S.gcash.scheduled){
+    var allDays=[],seen={};S.gcash.entries.forEach(function(e){if(e.day!=null&&!seen[e.day]){seen[e.day]=true;allDays.push(e.day);}});allDays.sort(function(a,b){return a-b;});
+    var totalAmt=S.gcash.entries.reduce(function(s,e){return s+e.amount;},0);
+    var totalFees=S.gcash.entries.filter(function(e){return e.status!=="Cancelled";}).reduce(function(s,e){return s+(TXN_FEE[e.agency]||0);},0);
+    var paidAmt=S.gcash.entries.filter(function(e){return e.status==="Paid";}).reduce(function(s,e){return s+e.amount;},0);
+    wrap.appendChild(buildStatCards([{l:"Total Entries",v:S.gcash.entries.length,big:true},{l:"Total Amount",v:fmt(totalAmt),labelColor:"rgba(115,146,227,0.9)"},{l:"Total Txn Fees",v:fmt(totalFees),labelColor:"rgba(132,53,235,0.9)"},{l:"Days Needed",v:allDays.length,big:true},{l:"Pending",v:fmt(totalAmt-paidAmt),accent:true}]));
+    var tabRow=div({css:{display:"flex",gap:"4px",marginBottom:"0.9rem"}},[]);
+    ["schedule","list"].forEach(function(t){tabRow.appendChild(btn({cls:"btn-tab"+(S.gcashTab===t?" active":""),onclick:function(tv){return function(){S.gcashTab=tv;render();};}(t)},[t==="schedule"?"Daily Schedule":"Payment List"]));});
+    wrap.appendChild(tabRow);
+    if(S.gcashTab==="schedule"){
+      var dayMap={};var filt2=S.gcash.entries.filter(function(e){return e.day!=null&&(S.gcashFilter.showCancelled||e.status!=="Cancelled");});
+      filt2.forEach(function(e){if(!dayMap[e.day])dayMap[e.day]=[];dayMap[e.day].push(e);});
+      // Also include manually-added empty days (no entries assigned yet)
+      Object.keys(S.gcash.dayDates).forEach(function(k){var dk=parseInt(k);if(!dayMap[dk])dayMap[dk]=[];});
+      var ddays=Object.keys(dayMap).map(Number).sort(function(a,b){return a-b;});var today=todayISO();
+      // Only show day cards where not all entries are Paid
+      var pendingDays=ddays.filter(function(d){return dayMap[d].length===0||!dayMap[d].every(function(e){return e.status==="Paid";});});
+      if(pendingDays.length===0&&ddays.length>0){wrap.appendChild(div({css:{textAlign:"center",padding:"2rem",color:var_tm(),fontSize:"13px"}},[div({css:{fontSize:"32px",marginBottom:"10px"}},["✅"]),div({css:{fontWeight:"500",color:"#239A0D",marginBottom:"5px"}},["All entries have been paid."]),div({css:{fontSize:"12px"}},["No pending transactions to display."])]));}
+
+      pendingDays.forEach(function(d){
+        var items=dayMap[d];var tot=items.reduce(function(s,e){return s+e.amount;},0);var totFee=items.reduce(function(s,e){return s+e.amount+(TXN_FEE[e.agency]||0);},0);
+        var allPaid=items.length>0&&items.every(function(e){return e.status==="Paid";});var dd=S.gcash.dayDates[d];var isTod=dd===today;
+        // Get unique deadline days (15 or 20) in this day
+        var dlDays=[];items.forEach(function(e){if(e.deadline){var dlDay=parseInt((e.deadline.split("-")[2]||"0"),10);if(dlDays.indexOf(dlDay)<0)dlDays.push(dlDay);}});
+        var hasMixedDL=dlDays.length>1;
+        var isOv=totFee>LIMIT||hasMixedDL;
+        var card=div({css:{background:isOv?"var(--badge-red-bg)":allPaid?"var(--badge-green-bg)":"var(--surface)",borderRadius:"10px",padding:"11px 13px",marginBottom:"9px",border:"0.5px solid "+(isOv?"#FCA5A5":isTod?"#32CE13":allPaid?"#C9F3BE":"var(--border)"),boxShadow:"0 2px 4px -1px rgba(3,50,34,0.06)"}},[]);
+        var ct=div({css:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"3px",flexWrap:"wrap",gap:"5px"}},[]);
+        // Show deadline tag on card header
+        var dlTag=dlDays.length===1?span({css:{fontSize:"10px",background:dlDays[0]===15?"var(--badge-blue-bg)":"var(--badge-amber-bg)",color:dlDays[0]===15?"var(--badge-blue-c)":"#A1470B",padding:"2px 8px",borderRadius:"999px",fontWeight:"600"}},["Due "+dlDays[0]+"th"]):null;
+        var cl=div({css:{display:"flex",alignItems:"center",gap:"7px",flexWrap:"wrap"}},[span({css:{fontSize:"12px",fontWeight:"500",color:isOv?"#B91C1C":allPaid?"#32CE13":var_th()}},["Day "+d+(allPaid?" — Paid":"")]),dlTag?dlTag:""]);
+        if(isTod&&!allPaid)cl.appendChild(bdg("Due Today","badge-green"));
+        if(dd)cl.appendChild(span({css:{fontSize:"11px",color:var_tm(),background:"var(--badge-green-bg)",padding:"2px 9px",borderRadius:"999px"}},[fmtD(dd)]));
+        if(isM||isS){var ddi=inp({type:"date",cls:"inp",css:{height:"28px",fontSize:"11px",padding:"0 10px",width:"auto"},value:dd||todayISO()});ddi.addEventListener("change",function(dv){return function(ev){S.gcash.dayDates[dv]=ev.target.value;saveG();render();};}(d));cl.appendChild(ddi);}
+        ct.appendChild(cl);ct.appendChild(div({css:{display:"flex",gap:"7px",alignItems:"center"}},[span({css:{fontSize:"12px",color:isOv?"#B91C1C":var_tm()}},[fmt(totFee)+" / "+fmt(LIMIT)])]));
+        card.appendChild(ct);var pw=div({cls:"progress-wrap"},[]);var pb=div({cls:"progress-bar",css:{width:Math.min((totFee/LIMIT)*100,100)+"%",background:isOv?"#B91C1C":totFee/LIMIT>=0.8?"#FF7F00":"#32CE13"}},[]);pw.appendChild(pb);card.appendChild(pw);
+        if(hasMixedDL)card.appendChild(div({css:{background:"#FEF2F2",border:"0.5px solid #FCA5A5",borderRadius:"7px",padding:"8px 12px",fontSize:"11px",color:"#B91C1C",marginTop:"7px",fontWeight:"500"}},["⛔ Mixed deadlines detected — 15th and 20th entries cannot share the same payment day. Move entries to separate days."]));
+        else if(isOv)card.appendChild(div({css:{background:"#FEF2F2",border:"0.5px solid #FCA5A5",borderRadius:"7px",padding:"8px 12px",fontSize:"11px",color:"#B91C1C",marginTop:"7px",fontWeight:"500"}},["⛔ Exceeds ₱100,000 daily limit — move entries to another day to enable status changes."]));
+        if(items.length===0){
+          var emptyNote=div({css:{display:"flex",alignItems:"center",justifyContent:"space-between",gap:"10px",padding:"12px 4px"}},[]);
+          emptyNote.appendChild(span({css:{color:var_tm(),fontSize:"12px",fontStyle:"italic"}},["No entries assigned — move entries here using the \"Move to →\" option on over-limit days."]));
+          if(isS){var delDayBtn=btn({css:{fontSize:"11px",color:"#B91C1C",background:"#FEF2F2",border:"0.5px solid #FCA5A5",borderRadius:"999px",padding:"3px 11px",cursor:"pointer",whiteSpace:"nowrap"},onclick:function(dn){return function(){delete S.gcash.dayDates[dn];saveG();render();};}(d)},["✕ Remove"]);emptyNote.appendChild(delDayBtn);}
+          card.appendChild(emptyNote);
+        }
+        items.forEach(function(e){
+          var ec=div({css:{background:"var(--surface)",borderRadius:"9px",padding:"10px 13px",border:"0.5px solid "+(isOv?"#FCA5A5":"var(--border)"),marginTop:"7px",opacity:e.status==="Cancelled"?"0.5":"1"}},[]);
+          var et=div({css:{display:"flex",justifyContent:"space-between",alignItems:"flex-start",flexWrap:"wrap",gap:"7px"}},[]);
+          var el2=div({css:{display:"flex",flexDirection:"column",gap:"2px"}},[span({css:{fontWeight:"600",fontSize:"13px",color:var_th()}},[e.client])]);
+          if(e.appMonth)el2.appendChild(span({css:{fontSize:"11px",color:var_tm()}},[e.appMonth]));
+          if(e.agency&&e.agency.indexOf("HDMF")===0&&e.mp2pin)el2.appendChild(span({css:{fontSize:"11px",color:"#A1470B",fontWeight:"500"}},["HDMF PIN: "+e.mp2pin]));
+          et.appendChild(el2);
+          var er=div({css:{display:"flex",gap:"7px",alignItems:"center",flexWrap:"wrap"}},[]);
+          er.appendChild(agBdg(e.agency));er.appendChild(span({css:{fontWeight:"700",fontSize:"14px"}},[fmt(e.amount)]));
+          er.appendChild(span({css:{fontSize:"11px",color:"#A1470B",background:"var(--badge-amber-bg)",padding:"2px 7px",borderRadius:"999px",fontWeight:"500"}},["+"+(fmt(TXN_FEE[e.agency]||0))+" fee"]));
+          er.appendChild(span({css:{fontSize:"11px",fontWeight:"600"}},[fmt(e.amount+(TXN_FEE[e.agency]||0))+" total"]));
+          if(!isA){
+            if(isOv&&isS){
+              // Over limit + scheduler: show status badge + Move to Day dropdown
+              er.appendChild(gcashBdg(e.status));
+              var moveWrap=div({css:{display:"flex",alignItems:"center",gap:"5px",background:"#FFF4D3",border:"0.5px solid #F59E0B",borderRadius:"999px",padding:"2px 6px 2px 10px"}},[]);
+              moveWrap.appendChild(span({css:{fontSize:"10px",color:"#A1470B",fontWeight:"500",whiteSpace:"nowrap"}},["Move to →"]));
+              // Only show days with matching deadline day (15th/20th) or empty days
+              var entryDlDay=e.deadline?parseInt((e.deadline.split("-")[2]||"0"),10):0;
+              var otherDays=pendingDays.filter(function(pd){
+                if(pd===d)return false;
+                var pdItems=dayMap[pd];
+                if(!pdItems||pdItems.length===0)return true; // empty day — always compatible
+                var pdDlDays=[];pdItems.forEach(function(pe){if(pe.deadline){var pdd=parseInt((pe.deadline.split("-")[2]||"0"),10);if(pdDlDays.indexOf(pdd)<0)pdDlDays.push(pdd);}});
+                return pdDlDays.length===0||(pdDlDays.length===1&&pdDlDays[0]===entryDlDay);
+              });
+              var dayOpts=["Day…"].concat(otherDays.map(function(od){return"Day "+od;}));
+              var moveSel=mkSelect(dayOpts,"Day…",function(eid2,curDay){return function(v){if(v==="Day…")return;var targetDay=parseInt(v.replace("Day ",""));moveEntryToDay(eid2,targetDay);};}(e.id,d),90);
+              moveSel.style.height="24px";moveSel.style.fontSize="11px";moveSel.style.borderRadius="999px";moveSel.style.border="none";moveSel.style.background="transparent";moveSel.style.color="#A1470B";moveSel.style.fontWeight="500";moveSel.style.cursor="pointer";
+              moveWrap.appendChild(moveSel);
+              er.appendChild(moveWrap);
+            } else if(isOv){
+              // Over limit + member: just show badge, no dropdown
+              er.appendChild(gcashBdg(e.status));
+              er.appendChild(span({css:{fontSize:"10px",color:"#B91C1C",background:"#FEF2F2",border:"0.5px solid #FCA5A5",padding:"2px 8px",borderRadius:"999px",fontWeight:"500"}},["⛔ Over limit"]));
+            } else {
+              if(e.status==="Paid"){er.appendChild(gcashBdg(e.status));}
+              else{var ss2=mkSelect(GCASH_STATUSES,e.status,function(eid2){return function(v2){var en2=S.gcash.entries.find(function(x){return x.id===eid2;});if(en2){en2.status=v2;if(v2==="Paid"&&!en2.paymentDate)en2.paymentDate=todayISO();}saveG();render();};}(e.id),100);er.appendChild(ss2);}
+            }
+          } else er.appendChild(gcashBdg(e.status));
+          // Late Payment badge on schedule card entry
+          if(e.status==="Paid"&&e.deadline){
+            if(isLatePayment(e))er.appendChild(bdg("Late Payment","badge badge-red-soft"));
+            else er.appendChild(bdg("On Time","badge-green"));
+          }
+          et.appendChild(er);ec.appendChild(et);card.appendChild(ec);
+        });
+        wrap.appendChild(card);
+      });
+      // Scheduler: Add new empty day button
+      if(isS){
+        var addDayBtn=btn({cls:"btn-outline",css:{width:"100%",height:"42px",border:"1.5px dashed var(--border)",borderRadius:"10px",fontSize:"13px",color:var_tm(),background:"transparent",cursor:"pointer",marginTop:"4px",display:"flex",alignItems:"center",justifyContent:"center",gap:"7px"},onclick:function(){addNewDay();}},["＋ Add Day"]);
+        wrap.appendChild(addDayBtn);
+      }
+    }else{
+      var lw=div({cls:"card-body overflow-x"},[]);var lt=el("table",{cls:"tbl"},[]);
+      lt.appendChild(el("thead",{},[el("tr",{},["Day","Date","Client","Agency","Amount","Txn Fee","Status"].map(function(h){return el("th",{},[h]);}))]));
+      var lb=el("tbody",{},[]);
+      S.gcash.entries.filter(function(e){return e.day!=null;}).sort(function(a,b){return a.day-b.day;}).forEach(function(e,idx){
+        lb.appendChild(el("tr",{cls:(idx>0?"row-sep ":"")+(idx%2===1?"zebra-even":""),css:{opacity:e.status==="Cancelled"?"0.5":"1"}},[el("td",{},["Day "+e.day]),el("td",{},[fmtD(S.gcash.dayDates[e.day])]),el("td",{},[e.client]),el("td",{},[agBdg(e.agency)]),el("td",{css:{fontWeight:"500"}},[fmt(e.amount)]),el("td",{css:{color:"#A1470B"}},[fmt(TXN_FEE[e.agency]||0)]),el("td",{},[gcashBdg(e.status)])]));
+      });
+      lt.appendChild(lb);lw.appendChild(lt);wrap.appendChild(lw);
+    }
+  }
+  return wrap;
+}
+function buildCheck(){
+  var isA=S.user.role==="approver",isS=S.user.role==="scheduler";
+  var wrap=div({},[]);
+  if(isA)wrap.appendChild(div({cls:"section-banner",css:{background:"var(--badge-purple-bg)",border:"0.5px solid var(--badge-purple-bg)"}},[div({},[div({css:{fontWeight:"500",color:"#8435EB",fontSize:"12px"}},["Approver View — Read Only"])]),div({css:{display:"flex",gap:"7px"}},[btn({cls:"btn-ubas",onclick:function(){dlCheckCSV();}},["⬇ Download"]),btn({cls:"btn-ubas",onclick:function(){openUploadModal("check");}},["📤 Bulk Upload"]),btn({cls:"btn-ubas",onclick:function(){printCheck();}},["🖨 Print"])])]));
+  if(isS)wrap.appendChild(div({cls:"section-banner",css:{background:"var(--badge-blue-bg)",border:"0.5px solid var(--badge-blue-bg)"}},[div({},[div({css:{fontWeight:"500",color:"var(--badge-blue-c)",fontSize:"12px"}},["Scheduler View"])]),div({css:{display:"flex",gap:"7px",flexWrap:"wrap"}},[btn({cls:"btn-blue",onclick:function(){dlCheckCSV();}},["⬇ Download"]),btn({cls:"btn-blue",onclick:function(){openUploadModal("check");}},["📤 Bulk Upload"]),btn({cls:"btn-blue",onclick:function(){printCheck();}},["🖨 Export"])])]));
+  var reqs=S.check.requests;
+  if(reqs.length>0){
+    var totA=reqs.reduce(function(s,r){return s+r.amount;},0);var paidA=reqs.filter(function(r){return r.status==="Paid";}).reduce(function(s,r){return s+r.amount;},0);var actC=reqs.filter(function(r){return r.status!=="Paid";}).length;
+    wrap.appendChild(buildStatCards([{l:"Total Requests",v:reqs.length,big:true},{l:"Total Amount",v:fmt(totA),labelColor:"rgba(115,146,227,0.9)"},{l:"Active",v:actC,big:true},{l:"Total Paid",v:fmt(paidA),accent:true}]));
+  }
+  if(reqs.length>0){
+    var cPage=S.checkFilter.page||1;var filt=reqs.filter(function(r){var mc=S.checkFilter.client?r.clientName.toLowerCase().indexOf(S.checkFilter.client.toLowerCase())>=0:true;var mt=S.checkFilter.type==="all"?true:(r.remType||"uptodate")===S.checkFilter.type;return mc&&mt;});
+    var cPages=Math.max(1,Math.ceil(filt.length/PAGE_SIZE));if(cPage>cPages)cPage=S.checkFilter.page=1;var pagedC=filt.slice((cPage-1)*PAGE_SIZE,cPage*PAGE_SIZE);
+    var tc2=div({cls:"card-body"},[]);var fR2=div({css:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"9px",flexWrap:"wrap",gap:"7px"}},[]);var fL2=div({css:{display:"flex",alignItems:"center",gap:"7px",flexWrap:"wrap"}},[]);
+    fL2.appendChild(div({css:{fontSize:"12px",fontWeight:"500",color:var_th()}},["All Check Requests ("+filt.length+"/"+reqs.length+")"]));
+    var srch2=inp({cls:"inp",css:{paddingLeft:"34px",width:"185px",fontSize:"12px"},value:S.checkFilter.client,placeholder:"Filter by client..."});srch2.addEventListener("input",function(e){S.checkFilter.client=e.target.value;S.checkFilter.page=1;render();});
+    fL2.appendChild(div({css:{position:"relative",display:"inline-flex",alignItems:"center"}},[span({css:{position:"absolute",left:"12px",fontSize:"13px",color:"#999",pointerEvents:"none"}},["🔍"]),srch2]));
+    var tw2=div({css:{display:"flex",gap:"4px"}},[]);[["all","All"],["uptodate","Up to Date"],["pastdue","Past Due"]].forEach(function(pair){var val=pair[0],lbl=pair[1];var cnt=val==="all"?"":(" ("+reqs.filter(function(r){return(r.remType||"uptodate")===val;}).length+")");var cls2="btn-tab"+(S.checkFilter.type===val?" active":"");if(val==="pastdue"&&S.checkFilter.type==="pastdue")cls2="btn-tab active-red";tw2.appendChild(btn({cls:cls2,onclick:function(v){return function(){S.checkFilter.type=v;S.checkFilter.page=1;render();};}(val)},[lbl+cnt]));});
+    fL2.appendChild(tw2);fR2.appendChild(fL2);if(!isA)fR2.appendChild(btn({cls:"btn-outline",css:{fontSize:"11px"},onclick:function(){printCheck();}},["🖨 Print"]));tc2.appendChild(fR2);
+    var tW2=div({cls:"overflow-x"},[]);var tbl2=el("table",{cls:"tbl"},[]);
+    var ch=["Client","Type","App. Month","Gov. Remittance","Check Payee","Type of Check","Amount","Date of Req","Requested By","Attachment","Appt No.","Status","Payment Date"];if(!isA)ch.push("");
+    tbl2.appendChild(el("thead",{},[el("tr",{},ch.map(function(h){return el("th",{},[h]);}))]));var tb2=el("tbody",{},[]);
+    pagedC.forEach(function(r,idx){
+      var tr=el("tr",{cls:(idx>0?"row-sep ":"")+(idx%2===1?"zebra-even":"")},[]);
+      tr.appendChild(el("td",{},[r.clientName]));tr.appendChild(el("td",{},[r.remType==="pastdue"?bdg("Past Due","badge badge-red-soft"):bdg("Up to Date","badge-green")]));tr.appendChild(el("td",{css:{color:var_tm()}},[r.appMonth||"—"]));tr.appendChild(el("td",{css:{color:var_tm(),whiteSpace:"nowrap"}},[r.govRem]));tr.appendChild(el("td",{css:{fontWeight:"500",whiteSpace:"nowrap"}},[r.checkPayee||getPayee(r.govRem)]));tr.appendChild(el("td",{css:{color:var_tm(),whiteSpace:"nowrap"}},[r.typeOfCheck||"—"]));tr.appendChild(el("td",{css:{fontWeight:"500"}},[fmt(r.amount)]));tr.appendChild(el("td",{css:{color:var_tm(),whiteSpace:"nowrap"}},[fmtD(r.dateOfReq)]));tr.appendChild(el("td",{},[r.reqBy]));
+      var atd=el("td",{},[]);if(r.attachFile)atd.appendChild(btn({cls:"btn-outline",css:{fontSize:"10px"},onclick:function(d,n){return function(){openFileModal(d,n);};}(r.attachFile,r.attachName)},["👁"]));else atd.appendChild(span({css:{color:var_tm(),fontSize:"10px"}},["—"]));tr.appendChild(atd);
+      var aptd=el("td",{},[]);if(isS&&r.status==="For Check Pick Up"){var ai=inp({cls:"inp",css:{height:"28px",fontSize:"10px",padding:"0 9px",width:"120px"},value:r.appointmentNumber||"",placeholder:"Appt. no."});ai.addEventListener("input",function(rid){return function(e){var rn=S.check.requests.find(function(x){return x.id===rid;});if(rn)rn.appointmentNumber=e.target.value;saveC();};}(r.id));aptd.appendChild(ai);}else aptd.appendChild(span({css:{color:var_tm(),fontSize:"11px"}},[r.appointmentNumber||"—"]));tr.appendChild(aptd);
+      var std2=el("td",{},[]);if(isA){std2.appendChild(statusBdg(r.status));}else{var ss3=document.createElement("select");ss3.className="inp";Object.assign(ss3.style,{height:"28px",fontSize:"10px",padding:"0 7px",width:"auto",border:"none",borderRadius:"999px",fontWeight:"500"});CHECK_STATUSES.forEach(function(s){var o=document.createElement("option");o.value=s;o.textContent=s;if(r.status===s)o.selected=true;ss3.appendChild(o);});var scm={"Pending":{bg:"var(--badge-amber-bg)",c:"#A1470B"},"Waiting for Appointment Number":{bg:"var(--badge-purple-bg)",c:"#5F21B6"},"For Check Pick Up":{bg:"var(--badge-blue-bg)",c:"#1356BA"},"Successful Check Pick Up":{bg:"var(--badge-teal-bg)",c:"#1E7B34"},"Paid":{bg:"var(--badge-green-bg)",c:"#239A0D"}};var sc2=scm[r.status]||scm["Pending"];ss3.style.background=sc2.bg;ss3.style.color=sc2.c;ss3.addEventListener("change",function(rid){return function(e){var rn=S.check.requests.find(function(x){return x.id===rid;});if(rn){rn.status=e.target.value;if(e.target.value==="Paid"&&!rn.dateOfPayment)rn.dateOfPayment=todayISO();}saveC();render();};}(r.id));std2.appendChild(ss3);}tr.appendChild(std2);
+      var pdtd2=el("td",{},[]);if(r.status==="Paid"){if(!isA){var di2=inp({type:"date",cls:"inp",css:{height:"28px",fontSize:"11px",padding:"0 9px",width:"138px"},value:r.dateOfPayment||""});di2.addEventListener("change",function(rid){return function(e){var rn=S.check.requests.find(function(x){return x.id===rid;});if(rn)rn.dateOfPayment=e.target.value;saveC();};}(r.id));pdtd2.appendChild(di2);}else pdtd2.appendChild(span({css:{fontSize:"11px",color:var_tm()}},[fmtD(r.dateOfPayment)]));}else pdtd2.appendChild(span({css:{fontSize:"10px",color:var_tm()}},["—"]));tr.appendChild(pdtd2);
+      if(!isA){var actd2=el("td",{},[]);actd2.appendChild(btn({cls:"btn-red",onclick:function(rid,rn,rg,ra){return function(){openConfirmModal("Remove this request?",rn+" — "+rg+" — "+fmt(ra),function(){S.check.requests=S.check.requests.filter(function(x){return x.id!==rid;});saveC();render();});};}(r.id,r.clientName,r.govRem,r.amount)},["Remove"]));tr.appendChild(actd2);}
+      tb2.appendChild(tr);
+    });
+    tbl2.appendChild(tb2);tW2.appendChild(tbl2);tc2.appendChild(tW2);
+    var pgEl2=buildPagination(filt.length,cPage,function(p){S.checkFilter.page=p;render();});if(pgEl2)tc2.appendChild(pgEl2);
+    wrap.appendChild(tc2);
+  }else if(!isA)wrap.appendChild(div({css:{textAlign:"center",padding:"2rem",color:var_tm(),fontSize:"12px"}},["No check requests yet. Click '+ Add Request' in the top bar."]));
+  return wrap;
+}
+function moveEntryToDay(eid,targetDay){
+  var en=S.gcash.entries.find(function(x){return x.id===eid;});
+  if(!en)return;
+  en.day=targetDay;
+  saveG();render();
+}
+function addNewDay(){
+  // Find next day number (max existing + 1)
+  var existingDays=[];
+  S.gcash.entries.forEach(function(e){if(e.day!=null)existingDays.push(e.day);});
+  Object.keys(S.gcash.dayDates).forEach(function(k){existingDays.push(parseInt(k));});
+  var nextDay=existingDays.length>0?Math.max.apply(null,existingDays)+1:1;
+  // Create empty day with no date yet
+  S.gcash.dayDates[nextDay]=todayISO();
+  S.gcash.scheduled=true;
+  saveG();render();
+}
+function autoSchedule(){
+  var entries=S.gcash.entries.filter(function(e){return e.status==="Pending";});
+  var groups={};entries.forEach(function(e){if(!groups[e.deadline])groups[e.deadline]=[];groups[e.deadline].push(e);});
+  var dn=1,assigned={},newDD={};
+  // Sort deadline groups: PhilHealth 15th first, then other 15th, then 20th, then rest
+  var dlKeys=Object.keys(groups).sort(function(a,b){
+    var a15=a.slice(-2)==="15",b15=b.slice(-2)==="15";
+    var aphil=groups[a].some(function(e){return e.agency==="PhilHealth";}),bphil=groups[b].some(function(e){return e.agency==="PhilHealth";});
+    if(aphil&&a15&&!(bphil&&b15))return -1;
+    if(bphil&&b15&&!(aphil&&a15))return 1;
+    return a<b?-1:a>b?1:0;
+  });
+  dlKeys.forEach(function(dl){
+    var bins=[];groups[dl].slice().sort(function(a,b){return b.amount-a.amount;}).forEach(function(e){var eFee=e.amount+(TXN_FEE[e.agency]||0);var p=false;for(var i=0;i<bins.length;i++){if(bins[i].total+eFee<=LIMIT){bins[i].entries.push(e);bins[i].total+=eFee;p=true;break;}}if(!p)bins.push({entries:[e],total:eFee});});
+    bins.forEach(function(b){b.entries.forEach(function(e){assigned[e.id]=dn;});newDD[dn]=todayISO();dn++;});
+  });
+  S.gcash.entries=S.gcash.entries.map(function(e){return e.status==="Pending"?Object.assign({},e,{day:assigned[e.id]!=null?assigned[e.id]:null}):e;});
+  S.gcash.scheduled=true;S.gcash.dayDates=newDD;saveG();render();
+}
+function addGcashEntry(){
+  var f=S.gcashForm;
+  if(!f.client){S.gcashFormErr="Client name is required.";render();return;}
+  var amt=parseFloat(f.amount);if(!amt||amt<=0){S.gcashFormErr="Enter a valid amount.";render();return;}
+  if(!f.agency){S.gcashFormErr="Please select an agency.";render();return;}
+  if(!f.deadline){S.gcashFormErr="Please select a deadline.";render();return;}
+  if(f.agency.indexOf("HDMF")===0&&!(f.mp2pin||"").trim()){S.gcashFormErr="HDMF Remittance PIN is required.";render();return;}
+  var rType=f.remType||"uptodate";if(rType==="pastdue"&&!f.pdMonth){S.gcashFormErr="Please select a month.";render();return;}
+  var appMonth=rType==="uptodate"?prevMonth():((f.pdMonth||"")+" "+(f.pdYear||new Date().getFullYear())).trim();
+  S.gcashFormErr="";
+  S.gcash.entries.push({id:S.gcash.idSeq++,client:f.client,agency:f.agency,amount:amt,mp2pin:(f.mp2pin||"").trim(),deadline:f.deadline,appMonth:appMonth,remType:rType,status:"Pending",day:null,pdfData:f.pdfFile||null,pdfName:f.pdfName||""});
+  S.gcash.scheduled=false;saveG();
+  S.gcashForm=Object.assign({},S.gcashForm,{client:"",agency:"",amount:"",mp2pin:"",pdfFile:null,pdfName:"",extracting:false,extractErr:"",pen:"",remType:"uptodate",appMonth:prevMonth(),pdMonth:"",pdYear:new Date().getFullYear()});
+  S.drawerOpen=false;render();
+}
+function addCheckEntry(){
+  var f=S.checkForm;
+  if(!f.clientName){S.checkFormErr="Client Name is required.";render();return;}if(!f.govRem){S.checkFormErr="Government Remittance is required.";render();return;}if(!f.typeOfCheck){S.checkFormErr="Type of Check is required.";render();return;}if(!(f.reqBy||"").trim()){S.checkFormErr="Requested By is required.";render();return;}
+  var rType=f.remType||"uptodate";if(rType==="pastdue"&&!f.pdMonth){S.checkFormErr="Please select a month.";render();return;}
+  var amt=parseFloat(f.amount);if(!amt||amt<=0){S.checkFormErr="Enter a valid amount.";render();return;}
+  var appMonth=rType==="uptodate"?prevMonth():((f.pdMonth||"")+" "+(f.pdYear||new Date().getFullYear())).trim();
+  S.checkFormErr="";
+  S.check.requests.push({id:S.check.idSeq++,clientName:f.clientName,govRem:f.govRem,checkPayee:getPayee(f.govRem),appMonth:appMonth,remType:rType,typeOfCheck:f.typeOfCheck,amount:amt,dateOfReq:f.dateOfReq||todayISO(),reqBy:f.reqBy.trim(),status:"Pending",appointmentNumber:"",dateOfPayment:"",attachFile:f.attachFile||null,attachName:f.attachName||""});
+  saveC();S.checkForm=Object.assign({},S.checkForm,{clientName:"",govRem:"",amount:"",dateOfReq:todayISO(),attachFile:null,attachName:"",remType:"uptodate",appMonth:prevMonth(),pdMonth:"",pdYear:new Date().getFullYear()});
+  S.drawerOpen=false;render();
+}
+function dlCheckCSV(){downloadCSV("Check_Request_"+todayISO()+".csv",CHECK_HDRS,S.check.requests.map(function(r){return[r.clientName,r.remType==="pastdue"?"Past Due":"Up to Date",r.appMonth||"",r.govRem,r.checkPayee||getPayee(r.govRem),r.typeOfCheck||"",r.amount,r.dateOfReq||"",r.reqBy||"",r.status||"Pending",r.dateOfPayment||""];}));}
+function printGcash(){var rows=S.gcash.entries.filter(function(e){return e.day!=null;}).sort(function(a,b){return a.day-b.day;}).map(function(e){return "<tr><td>Day "+e.day+"</td><td>"+fmtD(S.gcash.dayDates[e.day])+"</td><td>"+e.client+"</td><td>"+e.agency+"</td><td>"+fmt(e.amount)+"</td><td>"+e.status+"</td></tr>";}).join("");var w=window.open("","_blank");w.document.write("<html><head><title>GCash</title><style>body{font-family:Arial;padding:24px}table{width:100%;border-collapse:collapse;font-size:12px}th{background:#E8F6E0;padding:8px;text-align:left}td{padding:7px;border-bottom:0.5px solid #eee}</style></head><body><h2>GCash Remittance Schedule</h2><table><thead><tr><th>Day</th><th>Date</th><th>Client</th><th>Agency</th><th>Amount</th><th>Status</th></tr></thead><tbody>"+rows+"</tbody></table><scr"+"ipt>window.onload=function(){window.print();}<\/scr"+"ipt></body></html>");w.document.close();}
+function printCheck(){var rows=S.check.requests.map(function(r){return "<tr><td>"+r.clientName+"</td><td>"+r.govRem+"</td><td>"+fmt(r.amount)+"</td><td>"+r.reqBy+"</td><td>"+r.status+"</td><td>"+fmtD(r.dateOfPayment)+"</td></tr>";}).join("");var w=window.open("","_blank");w.document.write("<html><head><title>Check Requests</title><style>body{font-family:Arial;padding:24px}table{width:100%;border-collapse:collapse;font-size:12px}th{background:#E8F6E0;padding:8px;text-align:left}td{padding:7px;border-bottom:0.5px solid #eee}</style></head><body><h2>Check Request Monitoring</h2><table><thead><tr><th>Client</th><th>Gov. Remittance</th><th>Amount</th><th>Requested By</th><th>Status</th><th>Payment Date</th></tr></thead><tbody>"+rows+"</tbody></table><scr"+"ipt>window.onload=function(){window.print();}<\/scr"+"ipt></body></html>");w.document.close();}
+function openUploadModal(section){
+  var overlay=div({cls:"modal-overlay"},[]);var box=div({cls:"modal-box"},[]);var parsed=[];
+  box.appendChild(btn({css:{position:"absolute",top:"11px",right:"11px",background:"none",border:"none",fontSize:"18px",cursor:"pointer",color:"#999"},onclick:function(){document.body.removeChild(overlay);}},["✕"]));
+  box.appendChild(div({css:{fontSize:"14px",fontWeight:"600",color:var_th(),marginBottom:"4px"}},["📤 Bulk Upload — "+(section==="gcash"?"GCash Remittance":"Check Request")]));
+  box.appendChild(div({css:{fontSize:"11px",color:var_tm(),marginBottom:"14px"}},["Entries will be added to existing ones."]));
+  var fid="ul"+Date.now();var fInp=inp({type:"file",id:fid,accept:".csv",css:{display:"none"}});var fLbl=el("label",{for:fid,cls:"btn-green",css:{display:"inline-block",padding:"7px 18px",borderRadius:"999px",cursor:"pointer",fontSize:"12px"}},["Choose CSV File"]);var fNm=div({css:{marginTop:"9px",fontSize:"11px",color:"#239A0D",fontWeight:"500"}},[]);
+  var errD=div({css:{background:"var(--badge-red-bg)",color:"#B91C1C",padding:"9px 13px",borderRadius:"9px",fontSize:"12px",marginBottom:"11px",display:"none"}},[]);
+  var prevD=div({css:{marginBottom:"14px",display:"none"}},[]);
+  var confBtn=btn({cls:"btn-green",css:{height:"34px",fontSize:"12px",opacity:"0.4",cursor:"not-allowed"},onclick:function(){
+    if(!parsed.length)return;
+    if(section==="gcash"){var seq=S.gcash.idSeq;parsed.forEach(function(row){var c=row[0],ag=row[1],rt=row[2],am=row[3],amt=row[4],pin=row[5],dl=row[6],st=row[7];if(!c||!ag||!amt)return;S.gcash.entries.push({id:seq++,client:c.trim(),agency:ag.trim(),remType:(rt||"").toLowerCase().indexOf("past")>=0?"pastdue":"uptodate",appMonth:am||prevMonth(),amount:parseFloat(amt)||0,mp2pin:pin||"",deadline:dl||"",status:GCASH_STATUSES.indexOf(st)>=0?st:"Pending",day:null,pdfData:null,pdfName:""});});S.gcash.idSeq=seq;saveG();}
+    else{var seq2=S.check.idSeq;parsed.forEach(function(row){var cn=row[0],rt=row[1],am=row[2],gr=row[3],tc=row[5],amt2=row[6],dr=row[7],rb=row[8],st2=row[9],dp=row[10];if(!cn||!gr||!amt2)return;S.check.requests.push({id:seq2++,clientName:cn.trim(),govRem:gr.trim(),checkPayee:getPayee(gr.trim()),appMonth:am||prevMonth(),remType:(rt||"").toLowerCase().indexOf("past")>=0?"pastdue":"uptodate",typeOfCheck:tc||"",amount:parseFloat(amt2)||0,dateOfReq:dr||todayISO(),reqBy:rb||"",status:CHECK_STATUSES.indexOf(st2)>=0?st2:"Pending",appointmentNumber:"",dateOfPayment:dp||"",attachFile:null,attachName:""});});S.check.idSeq=seq2;saveC();}
+    document.body.removeChild(overlay);render();
+  }},["Upload →"]);
+  fInp.addEventListener("change",function(e){var file=e.target.files[0];if(!file)return;fNm.textContent="✓ "+file.name;var rd=new FileReader();rd.onload=function(ev){var text=ev.target.result;var lines=text.split(/\r?\n/).filter(function(l){return l.trim();});if(lines.length<2){errD.textContent="File appears empty.";errD.style.display="block";return;}var hdrs=parseCSVLine(lines[0]);var exp=section==="gcash"?GCASH_HDRS:CHECK_HDRS;var miss=exp.filter(function(h){return hdrs.indexOf(h)<0;});if(miss.length>0){errD.textContent="Missing columns: "+miss.join(", ");errD.style.display="block";return;}errD.style.display="none";parsed=lines.slice(1).map(parseCSVLine);prevD.innerHTML="<div style='font-size:11px;font-weight:500;margin-bottom:7px'>Preview — "+Math.min(5,parsed.length)+" of "+parsed.length+" rows</div>";var pt=document.createElement("table");pt.className="tbl";var ph=document.createElement("thead");var phr=document.createElement("tr");exp.forEach(function(h){var th=document.createElement("th");th.style.fontSize="10px";th.style.padding="5px 7px";th.textContent=h;phr.appendChild(th);});ph.appendChild(phr);pt.appendChild(ph);var pb=document.createElement("tbody");parsed.slice(0,5).forEach(function(row){var tr=document.createElement("tr");row.forEach(function(cell){var td=document.createElement("td");td.style.fontSize="10px";td.style.padding="5px 7px";td.textContent=cell||"—";tr.appendChild(td);});pb.appendChild(tr);});pt.appendChild(pb);prevD.appendChild(pt);prevD.style.display="block";confBtn.style.opacity="1";confBtn.style.cursor="pointer";};rd.readAsText(file);});
+  var dropZ=div({css:{border:"2px dashed var(--inp-border)",borderRadius:"12px",padding:"1.25rem",textAlign:"center",background:"var(--bg)",marginBottom:"14px"}},[div({css:{fontSize:"26px",marginBottom:"7px"}},["📁"]),div({css:{fontSize:"12px",color:var_tm(),marginBottom:"11px"}},["Click to select your CSV file"]),fInp,fLbl,fNm]);
+  box.appendChild(dropZ);box.appendChild(errD);box.appendChild(prevD);
+  box.appendChild(div({css:{display:"flex",gap:"8px",justifyContent:"flex-end"}},[btn({cls:"btn-outline",onclick:function(){document.body.removeChild(overlay);}},["Cancel"]),confBtn]));
+  overlay.appendChild(box);overlay.addEventListener("click",function(e){if(e.target===overlay)document.body.removeChild(overlay);});document.body.appendChild(overlay);
+}
+function openFileModal(fileData,fileName){
+  var overlay=div({cls:"modal-overlay"},[]);var box=div({cls:"modal-file"},[]);
+  box.appendChild(div({css:{display:"flex",justifyContent:"space-between",alignItems:"center",padding:"11px 15px",borderBottom:"1px solid var(--border)",flexShrink:"0"}},[span({css:{fontWeight:"600",fontSize:"13px",color:var_th()}},["📄 "+(fileName||"Attachment")]),btn({css:{background:"none",border:"none",fontSize:"20px",cursor:"pointer",color:var_tm(),lineHeight:"1"},onclick:function(){document.body.removeChild(overlay);}},["✕"])]));
+  try{var mime=fileData.split(";")[0].split(":")[1];var b=atob(fileData.split(",")[1]);var ab=new ArrayBuffer(b.length);var ia=new Uint8Array(ab);for(var i=0;i<b.length;i++)ia[i]=b.charCodeAt(i);var blob=new Blob([ab],{type:mime});var url=URL.createObjectURL(blob);var isView=mime==="application/pdf"||mime.indexOf("image/")===0;if(isView){var iframe=document.createElement("iframe");iframe.src=url;iframe.style.cssText="flex:1;border:none;width:100%;height:100%";box.appendChild(iframe);}else{box.appendChild(div({css:{flex:"1",display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",gap:"14px",padding:"2rem"}},[div({css:{fontSize:"44px"}},["📎"]),div({css:{fontSize:"13px",fontWeight:"500",color:var_th()}},[fileName||"File"]),el("a",{href:url,download:fileName||"download",cls:"btn-green",css:{display:"inline-block",padding:"9px 22px",textDecoration:"none",borderRadius:"999px"}},["⬇ Download"])]));}}catch(err){box.appendChild(div({css:{padding:"2rem",color:"#B91C1C",fontSize:"12px"}},["Unable to preview this file."]));}
+  overlay.appendChild(box);overlay.addEventListener("click",function(e){if(e.target===overlay)document.body.removeChild(overlay);});document.body.appendChild(overlay);
+}
+// ── Sprout Gov Tracker ──
+function openSGNewClientModal(){
+  var f={client:"",sub:false,hc:"",month:"",year:new Date().getFullYear(),poc:"",services:[],sss:"",phic:"",bir:"",hdmf:"",remarks:"—",mrrBase:6500,mrrRemarks:""};
+  var overlay=div({cls:"modal-overlay"},[]);
+  var box=div({cls:"modal-box",css:{maxWidth:"480px"}},[]);
+  var errEl=div({css:{fontSize:"11px",color:"#B91C1C",marginTop:"4px",display:"none"}},[]);
+  box.appendChild(div({css:{fontSize:"14px",fontWeight:"600",color:var_th(),marginBottom:"14px"}},["+ New Sprout Gov Client"]));
+  var svcs=["Sprout Gov","Ben Ad Services","Statutory Disbursement"];
+  function mkRow(lbl,el2){return div({css:{marginBottom:"10px"}},[div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},[lbl]),el2]);}
+  var cnI=inp({cls:"inp",css:{width:"100%"},placeholder:"Client name"});
+  var hcI=inp({type:"number",cls:"inp",css:{width:"100%"},placeholder:"Headcount"});
+  var moSel=mkSelect(MONTHS,"",function(v){f.month=v;},null,"Month");moSel.style.width="100%";
+  var yrSel=mkSelect(["2024","2025","2026"],String(f.year),function(v){f.year=parseInt(v);},null);yrSel.style.width="100%";
+  var pocSel=mkSelect(SG_POCS,"",function(v){f.poc=v;},null,"Select POC");pocSel.style.width="100%";
+  var ssI=inp({cls:"inp",css:{width:"100%"},placeholder:"e.g. Every 10th"});
+  var phI=inp({cls:"inp",css:{width:"100%"},placeholder:"e.g. Every 15th"});
+  var brI=inp({cls:"inp",css:{width:"100%"},placeholder:"e.g. Every 20th"});
+  var hdI=inp({cls:"inp",css:{width:"100%"},placeholder:"e.g. Every 10th"});
+  var remI=inp({cls:"inp",css:{width:"100%"},value:"—",placeholder:"Remarks"});
+  var svcDiv=div({css:{display:"flex",gap:"6px",flexWrap:"wrap"}});
+  svcs.forEach(function(s){var b=btn({cls:"btn-tab",onclick:function(){var idx=f.services.indexOf(s);if(idx>=0)f.services.splice(idx,1);else f.services.push(s);b.className="btn-tab"+(f.services.indexOf(s)>=0?" active":"");}},[ s]);svcDiv.appendChild(b);});
+  box.appendChild(mkRow("Client Name",cnI));
+  box.appendChild(mkRow("Services",svcDiv));
+  box.appendChild(mkRow("Headcount (HC)",hcI));
+  box.appendChild(div({css:{display:"flex",gap:"8px",marginBottom:"10px"}},[div({css:{flex:"1"}},[div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},["Month"]),moSel]),div({css:{flex:"1"}},[div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},["Year"]),yrSel])]));
+  box.appendChild(mkRow("POC",pocSel));
+  box.appendChild(div({css:{display:"grid",gridTemplateColumns:"1fr 1fr",gap:"8px",marginBottom:"10px"}},[
+    div({},[div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},["SSS"]),ssI]),
+    div({},[div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},["PhilHealth"]),phI]),
+    div({},[div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},["BIR"]),brI]),
+    div({},[div({css:{fontSize:"11px",color:var_tm(),marginBottom:"4px"}},["HDMF"]),hdI])
+  ]));
+  box.appendChild(mkRow("Remarks",remI));
+  box.appendChild(errEl);
+  box.appendChild(div({css:{display:"flex",gap:"8px",justifyContent:"flex-end",marginTop:"14px"}},[
+    btn({cls:"btn-outline",onclick:function(){document.body.removeChild(overlay);}},["Cancel"]),
+    btn({cls:"btn-green",onclick:function(){
+      var cn=cnI.value.trim(),hc=parseInt(hcI.value);
+      if(!cn){errEl.textContent="Client name is required.";errEl.style.display="block";return;}
+      if(!hc||hc<=0){errEl.textContent="Valid headcount required.";errEl.style.display="block";return;}
+      if(!f.month){errEl.textContent="Please select a month.";errEl.style.display="block";return;}
+      if(!f.poc){errEl.textContent="Please select a POC.";errEl.style.display="block";return;}
+      if(f.services.length===0){errEl.textContent="Select at least one service.";errEl.style.display="block";return;}
+      SG.clients.push({id:SG.idSeq++,accounts:1,client:cn,sub:false,hc:hc,month:f.month,year:f.year,poc:f.poc,services:f.services.slice(),sss:ssI.value.trim()||"—",phic:phI.value.trim()||"—",bir:brI.value.trim()||"—",hdmf:hdI.value.trim()||"—",remarks:remI.value.trim()||"—",mrrBase:6500,mrrRemarks:""});
+      saveSG();document.body.removeChild(overlay);render();
+    }},["Add Client"])
+  ]));
+  overlay.appendChild(box);overlay.addEventListener("click",function(e){if(e.target===overlay)document.body.removeChild(overlay);});document.body.appendChild(overlay);
+}
+function buildSproutGov(){
+  var wrap=div({},[]);
+  var totalHC=SG.clients.reduce(function(s,c){return s+c.hc;},0);
+  // stat cards
+  var activeClients=SG.clients.filter(function(c){return !c.sub;}).length;
+  var totalMRR=SG.clients.filter(function(c){return !c.sub;}).reduce(function(s,c){var excess=Math.max(0,c.hc-200);return s+(c.mrrBase||6500)+(excess*10);},0);
+  wrap.appendChild(buildStatCards([
+    {l:"Active Clients",v:activeClients,big:true},
+    {l:"Total HC",v:totalHC,big:true},
+    {l:"Churned",v:SG.churned.length,big:true},
+    {l:"Est. Total MRR",v:fmt(totalMRR),accent:true}
+  ]));
+  var card=div({cls:"sg-card"});
+  // card header
+  var hdr=div({cls:"sg-card-hdr"},[
+    span({css:{fontSize:"12px",fontWeight:"500",color:var_th()}},["Client Records"]),
+    div({css:{display:"flex",gap:"5px"}},[
+      span({cls:"badge badge-green"},[SG.clients.filter(function(c){return !c.sub;}).length+" clients"]),
+      span({cls:"badge badge-blue"},["HC: "+totalHC])
+    ])
+  ]);
+  card.appendChild(hdr);
+  // tabs
+  var tabBar=div({cls:"sg-otabs"});
+  var tabDefs=[["sgc","Sprout Gov Clients"],["churned","Churned / Finished"],["mrr","MRR"],["poc","POC Summary"]];
+  tabDefs.forEach(function(t){
+    var b=btn({cls:"sg-otab"+(SG.activeTab===t[0]?" active":""),onclick:function(key){return function(){SG.activeTab=key;render();};}(t[0])},[t[1]]);
+    if(t[0]==="churned"&&SG.churned.length>0){b.appendChild(span({css:{background:"var(--badge-red-bg)",color:"var(--badge-red-c)",padding:"1px 6px",borderRadius:"999px",fontSize:"9px",marginLeft:"4px"}},[String(SG.churned.length)]));}
+    tabBar.appendChild(b);
+  });
+  card.appendChild(tabBar);
+  // ── SGC Tab ──
+  var sgcPanel=div({cls:"sg-tab-panel"+(SG.activeTab==="sgc"?" active":"")});
+  var sgcContent=div({cls:"sg-tab-content"});
+  sgcContent.appendChild(div({css:{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:"8px"}},[
+    span({css:{fontSize:"10px",color:var_tm()}},["Click ✏️ Edit on any row to update POC, HC, or schedule"]),
+    btn({cls:"btn-outline",css:{fontSize:"10px",display:"flex",alignItems:"center",gap:"4px"},onclick:function(){
+      var rows=SG.clients.map(function(c){return[c.id,c.accounts||"",c.client,c.hc,c.month,c.year,c.poc,c.services.join("|"),c.sss,c.phic,c.bir,c.hdmf,c.remarks].join("\t");}).join("\n");
+      navigator.clipboard&&navigator.clipboard.writeText(rows).then(function(){showToast();});
+    }},["📋 Copy rows"])
+  ]));
+  var sgcScroll=div({cls:"overflow-x"});
+  var sgcTbl=document.createElement("table");sgcTbl.className="sg-tbl";
+  sgcTbl.innerHTML='<thead><tr><th>#</th><th>Accounts</th><th>Client</th><th>HC</th><th>Mo. Started</th><th>Yr.</th><th>POC</th><th>Services</th><th>SSS</th><th>PHIC</th><th>BIR</th><th>HDMF</th><th>Remarks</th><th>Actions</th></tr></thead>';
+  var sgcTbody=document.createElement("tbody");
+  SG.clients.forEach(function(c){
+    var tr=document.createElement("tr");
+    if(SG.editingId===c.id){
+      tr.innerHTML='<td>'+c.id+'</td><td>'+(c.accounts||'')+'</td>'
+        +'<td style="padding-left:'+(c.sub?'18px':'6px')+';">'+(c.sub?'<span style="color:var(--text-muted)">↳ </span>':'')+c.client+'</td>'
+        +'<td><input class="sg-inp" id="sgEditHC" type="number" value="'+c.hc+'" style="width:64px;"></td>'
+        +'<td>'+c.month+'</td><td>'+c.year+'</td>'
+        +'<td><select class="sg-sel" id="sgEditPOC">'+SG_POCS.map(function(p){return'<option value="'+p+'"'+(p===c.poc?' selected':'')+'>'+p+'</option>';}).join('')+'</select></td>'
+        +'<td>'+sgSvcBdg(c.services)+'</td>'
+        +'<td><input class="sg-inp" id="sgEditSSS" value="'+c.sss+'" style="width:90px;"></td>'
+        +'<td><input class="sg-inp" id="sgEditPHIC" value="'+c.phic+'" style="width:90px;"></td>'
+        +'<td><input class="sg-inp" id="sgEditBIR" value="'+c.bir+'" style="width:90px;"></td>'
+        +'<td><input class="sg-inp" id="sgEditHDMF" value="'+c.hdmf+'" style="width:90px;"></td>'
+        +'<td><input class="sg-inp" id="sgEditRem" value="'+c.remarks+'" style="width:90px;"></td>'
+        +'<td><div style="display:flex;gap:5px;"><button class="sg-btn-save" onclick="window._sgSave('+c.id+')">✓ Save</button><button class="sg-btn-cancel" onclick="window._sgCancel()">✕</button></div></td>';
+    } else {
+      var pocChurned=c.poc==="Churned/ Will Not Continue";
+      tr.innerHTML='<td>'+c.id+'</td><td>'+(c.accounts||'')+'</td>'
+        +'<td style="font-weight:'+(c.sub?'400':'500')+';color:'+(c.sub?'var(--text-muted)':'var(--text-head)')+';padding-left:'+(c.sub?'18px':'6px')+';">'+(c.sub?'↳ ':'')+c.client+'</td>'
+        +'<td>'+c.hc+'</td><td>'+c.month+'</td><td>'+c.year+'</td>'
+        +'<td>'+sgPocBdg(c.poc)+'</td><td>'+sgSvcBdg(c.services)+'</td>'
+        +'<td style="color:var(--text-muted);">'+c.sss+'</td>'
+        +'<td style="color:var(--text-muted);">'+c.phic+'</td>'
+        +'<td style="color:var(--text-muted);">'+c.bir+'</td>'
+        +'<td style="color:var(--text-muted);">'+c.hdmf+'</td>'
+        +'<td style="color:var(--text-muted);">'+c.remarks+'</td>'
+        +'<td><div style="display:flex;gap:5px;"><button class="sg-btn-edit" onclick="window._sgEdit('+c.id+')">✏️ Edit</button></div></td>';
+    }
+    sgcTbody.appendChild(tr);
+  });
+  sgcTbl.appendChild(sgcTbody);sgcScroll.appendChild(sgcTbl);sgcContent.appendChild(sgcScroll);sgcPanel.appendChild(sgcContent);card.appendChild(sgcPanel);
+  // ── Churned Tab ──
+  var chPanel=div({cls:"sg-tab-panel"+(SG.activeTab==="churned"?" active":"")});
+  var chContent=div({cls:"sg-tab-content"});
+  chContent.appendChild(div({css:{fontSize:"10px",color:"var(--badge-red-c)",background:"var(--badge-red-bg)",border:"0.5px solid #FCA5A5",borderRadius:"8px",padding:"6px 10px",marginBottom:"8px"}},["⚠️ Auto-transferred when POC is set to Churned / Will Not Continue"]));
+  var chScroll=div({cls:"overflow-x"});
+  var chTbl=document.createElement("table");chTbl.className="sg-tbl";
+  chTbl.innerHTML='<thead><tr><th>#</th><th>Client</th><th>HC</th><th>Mo. Started</th><th>Yr.</th><th>POC Status</th><th>Services</th><th>SSS</th><th>PHIC</th><th>BIR</th><th>HDMF</th><th>Remarks</th></tr></thead>';
+  var chTbody=document.createElement("tbody");
+  SG.churned.forEach(function(c,i){
+    var tr=document.createElement("tr");tr.style.background="var(--badge-red-bg)";
+    tr.innerHTML='<td>'+(i+1)+'</td><td style="font-weight:500;color:var(--badge-red-c);">'+c.client+'</td>'
+      +'<td>'+c.hc+'</td><td>'+c.month+'</td><td>'+c.year+'</td>'
+      +'<td><span class="badge badge-red-soft">Churned / Will Not Continue</span></td>'
+      +'<td>'+sgSvcBdg(c.services)+'</td>'
+      +'<td>'+c.sss+'</td><td>'+c.phic+'</td><td>'+c.bir+'</td><td>'+c.hdmf+'</td><td>'+c.remarks+'</td>';
+    chTbody.appendChild(tr);
+  });
+  if(SG.churned.length===0){var er=document.createElement("tr");er.innerHTML='<td colspan="12" style="text-align:center;padding:1.5rem;color:var(--text-muted);font-size:11px;">No churned clients yet.</td>';chTbody.appendChild(er);}
+  chTbl.appendChild(chTbody);chScroll.appendChild(chTbl);chContent.appendChild(chScroll);chPanel.appendChild(chContent);card.appendChild(chPanel);
+  // ── MRR Tab ──
+  var mrrPanel=div({cls:"sg-tab-panel"+(SG.activeTab==="mrr"?" active":"")});
+  var mrrContent=div({cls:"sg-tab-content"});
+  var mrrScroll=div({cls:"overflow-x"});
+  var mrrTbl=document.createElement("table");mrrTbl.className="sg-tbl";
+  mrrTbl.innerHTML='<thead><tr><th>No.</th><th>Accounts</th><th>Client</th><th>HC</th><th>Mo.</th><th>Yr.</th><th>POC</th><th>Services</th><th>MRR Remarks</th><th>Base MRR (₱)</th><th>&gt;200 HC</th><th>Excess Amt</th><th>Total MRR</th></tr></thead>';
+  var mrrTbody=document.createElement("tbody");
+  SG.clients.forEach(function(c,i){
+    var excess=c.sub?0:Math.max(0,c.hc-200);
+    var base=c.sub?0:(c.mrrBase!=null?c.mrrBase:6500);
+    var exAmt=excess*10;
+    var total=c.sub?0:(base+exAmt);
+    var tr=document.createElement("tr");
+    tr.innerHTML='<td>'+(i+1)+'</td><td>'+(c.accounts||'')+'</td>'
+      +'<td style="font-weight:'+(c.sub?'400':'500')+';color:'+(c.sub?'var(--text-muted)':'var(--text-head)')+';padding-left:'+(c.sub?'18px':'6px')+';">'+(c.sub?'↳ ':'')+c.client+'</td>'
+      +'<td>'+c.hc+'</td><td>'+c.month+'</td><td>'+c.year+'</td>'
+      +'<td>'+sgPocBdg(c.poc)+'</td><td>'+sgSvcBdg(c.services)+'</td>';
+    // MRR Remarks — editable
+    var remTd=document.createElement("td");
+    if(!c.sub){var remInp=document.createElement("input");remInp.className="sg-inp";remInp.style.width="110px";remInp.value=c.mrrRemarks||"";remInp.placeholder="Remarks...";remInp.addEventListener("input",function(cid){return function(e){var cx=SG.clients.find(function(x){return x.id===cid;});if(cx)cx.mrrRemarks=e.target.value;};}(c.id));remTd.appendChild(remInp);}else{remTd.innerHTML='<span style="color:var(--text-muted);">—</span>';}tr.appendChild(remTd);
+    // Base MRR — editable
+    var baseTd=document.createElement("td");
+    if(!c.sub){var baseInp=document.createElement("input");baseInp.className="sg-inp";baseInp.type="number";baseInp.style.width="80px";baseInp.value=base;baseInp.addEventListener("change",function(cid){return function(e){var cx=SG.clients.find(function(x){return x.id===cid;});if(cx){cx.mrrBase=parseFloat(e.target.value)||0;saveSG();render();}};}(c.id));baseTd.appendChild(baseInp);}else{baseTd.innerHTML='<span style="color:var(--text-muted);">—</span>';}tr.appendChild(baseTd);
+    // >200 HC
+    var hcTd=document.createElement("td");hcTd.style.color="var(--text-muted)";hcTd.style.fontSize="10px";hcTd.textContent=c.sub?"—":(c.hc>200?"YES":"NO");tr.appendChild(hcTd);
+    // Excess Amt
+    var exTd=document.createElement("td");exTd.style.color="var(--text-muted)";exTd.textContent=c.sub?"—":"₱"+exAmt.toLocaleString();tr.appendChild(exTd);
+    // Total MRR
+    var totTd=document.createElement("td");totTd.style.fontWeight="600";totTd.style.color=c.sub?"var(--text-muted)":"var(--badge-green-c)";totTd.textContent=c.sub?"—":"₱"+total.toLocaleString();tr.appendChild(totTd);
+    mrrTbody.appendChild(tr);
+  });
+  // totals row
+  var totRow=document.createElement("tr");totRow.style.background="var(--tbl-head-bg)";totRow.style.fontWeight="600";
+  var grandMRR=SG.clients.filter(function(c){return !c.sub;}).reduce(function(s,c){var ex=Math.max(0,c.hc-200);return s+(c.mrrBase||6500)+(ex*10);},0);
+  totRow.innerHTML='<td colspan="12" style="text-align:right;color:var(--text-head);font-size:10px;padding:6px 8px;">Grand Total MRR</td><td style="color:var(--badge-green-c);font-size:11px;padding:6px 8px;">₱'+grandMRR.toLocaleString()+'</td>';
+  mrrTbody.appendChild(totRow);
+  mrrTbl.appendChild(mrrTbody);mrrScroll.appendChild(mrrTbl);mrrContent.appendChild(mrrScroll);mrrPanel.appendChild(mrrContent);card.appendChild(mrrPanel);
+  // ── POC Summary Tab ──
+  var pocPanel=div({cls:"sg-tab-panel"+(SG.activeTab==="poc"?" active":"")});
+  var pocContent=div({cls:"sg-tab-content"});
+  pocContent.appendChild(div({css:{fontSize:"11px",fontWeight:"500",color:var_th(),marginBottom:"10px"}},["Detailed breakdown per POC"]));
+  var pocColors={"Alva":"badge-blue","Denise":"badge-purple","Mhae":"badge-amber","Pau":"badge-green","Marix":"badge-blue","Zona":"badge-green","Zab":"badge-purple"};
+  var groups={};
+  SG.clients.forEach(function(c){
+    if(!groups[c.poc])groups[c.poc]={clients:[],totalHC:0,accounts:0};
+    groups[c.poc].clients.push(c);groups[c.poc].totalHC+=c.hc;
+    if(!c.sub)groups[c.poc].accounts++;
+  });
+  Object.keys(groups).forEach(function(poc){
+    var g=groups[poc];
+    var pocMRR=g.clients.filter(function(c){return !c.sub;}).reduce(function(s,c){var ex=Math.max(0,c.hc-200);return s+(c.mrrBase||6500)+(ex*10);},0);
+    var pocCard=div({cls:"sg-poc-card"});
+    pocCard.appendChild(div({css:{fontSize:"12px",fontWeight:"500",color:var_th(),marginBottom:"6px",display:"flex",alignItems:"center",gap:"6px"}},[
+      span({cls:"badge "+(pocColors[poc.split(" ")[0]]||"badge-blue"),css:{fontSize:"11px",padding:"3px 10px"}},[poc])
+    ]));
+    var stats=div({css:{display:"flex",gap:"8px",flexWrap:"wrap",marginBottom:"8px"}});
+    [{l:"Clients",v:g.accounts},{l:"Accounts",v:g.clients.length},{l:"Total HC",v:g.totalHC},{l:"Est. MRR",v:"₱"+pocMRR.toLocaleString(),accent:true}].forEach(function(m){
+      var sc=div({cls:"sg-poc-stat"});
+      sc.appendChild(div({cls:"sg-poc-stat-lbl"},[m.l]));
+      sc.appendChild(div({cls:"sg-poc-stat-val",css:{fontSize:m.accent?"13px":"16px",color:m.accent?"var(--badge-green-c)":"var(--text-head)"}},[String(m.v)]));
+      stats.appendChild(sc);
+    });
+    pocCard.appendChild(stats);
+    var clist=div({css:{borderTop:"0.5px solid var(--border-light)",paddingTop:"6px"}});
+    g.clients.forEach(function(c){
+      var row=div({cls:"sg-client-row"});
+      row.innerHTML='<div style="display:flex;align-items:center;gap:6px;">'+(c.sub?'<span style="color:var(--text-muted);">↳</span>':'')
+        +'<span style="font-weight:'+(c.sub?'400':'500')+';color:'+(c.sub?'var(--text-muted)':'var(--text-head)')+';">'+c.client+'</span></div>'
+        +'<div style="display:flex;gap:6px;align-items:center;">'+sgSvcBdg(c.services)
+        +'<span style="font-size:10px;color:var(--text-muted);">HC: '+c.hc+'</span>'
+        +'<span style="font-size:10px;color:var(--text-muted);">'+c.month+' '+c.year+'</span></div>';
+      clist.appendChild(row);
+    });
+    pocCard.appendChild(clist);pocContent.appendChild(pocCard);
+  });
+  pocPanel.appendChild(pocContent);card.appendChild(pocPanel);
+  wrap.appendChild(card);return wrap;
+}
+// Sprout Gov global handlers (called from innerHTML onclick)
+window._sgEdit=function(id){SG.editingId=id;render();};
+window._sgCancel=function(){SG.editingId=null;render();};
+window._sgSave=function(id){
+  var c=SG.clients.find(function(x){return x.id===id;});
+  if(c){
+    var hcEl=document.getElementById("sgEditHC"),pocEl=document.getElementById("sgEditPOC");
+    var sssEl=document.getElementById("sgEditSSS"),phicEl=document.getElementById("sgEditPHIC");
+    var birEl=document.getElementById("sgEditBIR"),hdmfEl=document.getElementById("sgEditHDMF");
+    var remEl=document.getElementById("sgEditRem");
+    if(hcEl)c.hc=parseInt(hcEl.value)||c.hc;
+    if(pocEl){
+      var newPoc=pocEl.value;
+      if(newPoc==="Churned/ Will Not Continue"&&c.poc!=="Churned/ Will Not Continue"){
+        SG.churned.push(Object.assign({},c,{poc:newPoc}));
+        SG.clients=SG.clients.filter(function(x){return x.id!==id;});
+      } else c.poc=newPoc;
+    }
+    if(sssEl)c.sss=sssEl.value.trim()||c.sss;
+    if(phicEl)c.phic=phicEl.value.trim()||c.phic;
+    if(birEl)c.bir=birEl.value.trim()||c.bir;
+    if(hdmfEl)c.hdmf=hdmfEl.value.trim()||c.hdmf;
+    if(remEl)c.remarks=remEl.value.trim()||c.remarks;
+  }
+  SG.editingId=null;saveSG();render();
+};
+window._sgChurn=function(id){
+  openConfirmModal("Move to Churned?","This client will be moved to the Churned/Finished tab.",function(){
+    var c=SG.clients.find(function(x){return x.id===id;});
+    if(c){c.poc="Churned/ Will Not Continue";SG.churned.push(Object.assign({},c));SG.clients=SG.clients.filter(function(x){return x.id!==id;});}
+    saveSG();render();
+  });
+};
+function render(){
+  document.body.className=S.darkMode?"dark":"";
+  var isBenAd=S.section==="maternity"||S.section==="sickness"||S.section==="processed";
+  var root=document.getElementById("root");
+  var benadApp=document.getElementById("benad-app");
+  if(isBenAd&&S.user){
+    root.style.display="none";
+    if(benadApp){
+      benadApp.style.display="flex";
+      benadNavSync(S.section,S.sidebarOpen,S.darkMode);
+    }
+    return;
+  }
+  if(benadApp)benadApp.style.display="none";
+  root.style.display="";
+  while(root.firstChild)root.removeChild(root.firstChild);
+  if(!S.user){root.appendChild(buildLogin());return;}
+  loadData();
+  var app=div({cls:"app"},[]);
+  app.appendChild(buildSidebar());
+  var main=div({cls:"main"+(S.sidebarOpen?"":" collapsed")},[]);
+  main.appendChild(buildTopbar());
+  var content=div({cls:"content"},[]);
+  if(S.section==="gcash")content.appendChild(buildGcash());
+  else if(S.section==="check")content.appendChild(buildCheck());
+  else if(S.section==="sprout-gov")content.appendChild(buildSproutGov());
+  main.appendChild(content);app.appendChild(main);root.appendChild(app);
+  if(S.section==="gcash"||S.section==="check")root.appendChild(buildDrawer());
+  if(S.toast){var t=div({cls:"toast"},["✓ Saved"]);root.appendChild(t);}
+}
+loadData();render();
+})();
+</script>
+</body>
+</html>
